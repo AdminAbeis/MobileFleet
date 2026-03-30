@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Fleet – Lubrificação Express | UNIPAR</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #C8A94B;
+    --gold-light: #E8C96B;
+    --gold-dim: rgba(200,169,75,0.15);
+    --dark: #0A0A0A;
+    --dark-2: #111111;
+    --dark-3: #1A1A1A;
+    --dark-4: #222222;
+    --text: #E8E0D0;
+    --text-dim: #8A8278;
+    --white: #F5F0E8;
+    --red-uni: #B22222;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.35;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(200,169,75,0.12);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--gold); letter-spacing: 0.05em;
+  }
+  .nav-logo span { color: var(--text-dim); font-weight: 400; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-dim);
+    text-decoration: none; transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: grid; place-items: center;
+    position: relative; overflow: hidden;
+    padding: 8rem 4rem 4rem;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(200,169,75,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 20%, rgba(178,34,34,0.06) 0%, transparent 60%),
+      linear-gradient(160deg, #0A0A0A 0%, #111008 100%);
+  }
+  .hero-lines {
+    position: absolute; inset: 0; overflow: hidden;
+  }
+  .hero-lines::before {
+    content: '';
+    position: absolute; top: -50%; left: 20%;
+    width: 1px; height: 200%;
+    background: linear-gradient(to bottom, transparent, rgba(200,169,75,0.3), transparent);
+    animation: lineFloat 8s ease-in-out infinite;
+  }
+  .hero-lines::after {
+    content: '';
+    position: absolute; top: -50%; left: 70%;
+    width: 1px; height: 200%;
+    background: linear-gradient(to bottom, transparent, rgba(200,169,75,0.15), transparent);
+    animation: lineFloat 12s ease-in-out infinite reverse;
+  }
+  @keyframes lineFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-30px); }
+  }
+  .hero-inner {
+    position: relative; z-index: 2;
+    max-width: 960px; text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    padding: 0.4rem 1.2rem;
+    border: 1px solid rgba(200,169,75,0.4);
+    border-radius: 2px;
+    font-size: 0.7rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 2.5rem;
+    background: rgba(200,169,75,0.05);
+    animation: fadeUp 1s ease both 0.2s;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+    animation: fadeUp 1s ease both 0.4s;
+  }
+  .hero-title em {
+    font-style: italic; color: var(--gold);
+  }
+  .hero-subtitle {
+    font-size: 1.1rem; font-weight: 300;
+    color: var(--text-dim); line-height: 1.7;
+    max-width: 580px; margin: 0 auto 3rem;
+    animation: fadeUp 1s ease both 0.6s;
+  }
+  .hero-meta {
+    display: flex; gap: 3rem; justify-content: center;
+    font-size: 0.75rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-dim);
+    animation: fadeUp 1s ease both 0.8s;
+  }
+  .hero-meta strong { color: var(--gold); display: block; font-size: 0.95rem; letter-spacing: 0; text-transform: none; margin-bottom: 0.3rem; font-weight: 500; }
+
+  .scroll-hint {
+    position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    color: var(--text-dim); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    animation: fadeUp 1s ease both 1.2s;
+  }
+  .scroll-hint::after {
+    content: '';
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SECTIONS ─── */
+  section { padding: 6rem 4rem; max-width: 1200px; margin: 0 auto; }
+
+  .section-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .section-label::after {
+    content: ''; flex: 0 0 40px; height: 1px; background: var(--gold); opacity: 0.5;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700; color: var(--white);
+    line-height: 1.2; margin-bottom: 2rem;
+  }
+
+  .section-body {
+    font-size: 0.975rem; line-height: 1.85;
+    color: #B0A898; max-width: 72ch;
+  }
+  .section-body p + p { margin-top: 1.2rem; }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(200,169,75,0.25), transparent);
+    margin: 0 auto;
+  }
+
+  /* ─── INTRO GRID ─── */
+  .intro-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: start;
+  }
+  .intro-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .stat-card {
+    background: var(--dark-3);
+    border: 1px solid rgba(200,169,75,0.12);
+    padding: 1.5rem; border-radius: 4px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .stat-card:hover { border-color: rgba(200,169,75,0.4); transform: translateY(-3px); }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; color: var(--gold); font-weight: 700;
+    line-height: 1;
+  }
+  .stat-label { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.4rem; line-height: 1.4; }
+
+  /* ─── MARKET ANALYSIS ─── */
+  .segments-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; }
+  .segment-card {
+    background: var(--dark-3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px; padding: 2rem;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .segment-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+  .segment-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .segment-card.b2b::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+  .segment-card.b2c::before { background: linear-gradient(90deg, #8B6914, var(--gold-dim)); }
+  .segment-tag {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 0.3rem 0.8rem; border-radius: 2px; display: inline-block; margin-bottom: 1rem;
+  }
+  .b2b .segment-tag { background: rgba(200,169,75,0.15); color: var(--gold); }
+  .b2c .segment-tag { background: rgba(200,169,75,0.07); color: #8B6914; }
+  .segment-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--white); margin-bottom: 0.8rem; }
+  .segment-desc { font-size: 0.88rem; color: var(--text-dim); line-height: 1.7; }
+  .segment-list { list-style: none; margin-top: 1rem; }
+  .segment-list li { font-size: 0.83rem; color: #A09880; padding: 0.3rem 0; padding-left: 1rem; position: relative; }
+  .segment-list li::before { content: '›'; position: absolute; left: 0; color: var(--gold); }
+
+  /* ─── CANVAS ─── */
+  .canvas-section { padding: 6rem 2rem; background: var(--dark-2); }
+  .canvas-inner { max-width: 1300px; margin: 0 auto; }
+  .canvas-header { text-align: center; margin-bottom: 3rem; }
+
+  .canvas-grid {
+    display: grid;
+    grid-template-areas:
+      "partners activities value relations customers"
+      "partners resources  value channels  customers"
+      "costs    costs      costs revenues  revenues";
+    grid-template-columns: 1.2fr 1fr 1.2fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr auto;
+    gap: 1px;
+    background: rgba(200,169,75,0.1);
+    border: 1px solid rgba(200,169,75,0.15);
+    border-radius: 8px; overflow: hidden;
+    min-height: 520px;
+  }
+  .c-block {
+    background: var(--dark-3);
+    padding: 1.4rem;
+    transition: background 0.3s;
+  }
+  .c-block:hover { background: var(--dark-4); }
+  .c-area-partners  { grid-area: partners; }
+  .c-area-activities{ grid-area: activities; }
+  .c-area-value     { grid-area: value; background: rgba(200,169,75,0.04); border-left: 2px solid rgba(200,169,75,0.3); }
+  .c-area-relations { grid-area: relations; }
+  .c-area-customers { grid-area: customers; }
+  .c-area-resources { grid-area: resources; }
+  .c-area-channels  { grid-area: channels; }
+  .c-area-costs     { grid-area: costs; }
+  .c-area-revenues  { grid-area: revenues; background: rgba(200,169,75,0.04); }
+
+  .c-block-title {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.8rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .c-block-title .icon { font-size: 0.9rem; }
+  .c-items { list-style: none; }
+  .c-items li {
+    font-size: 0.79rem; color: #9A9080; padding: 0.25rem 0;
+    padding-left: 0.9rem; position: relative; line-height: 1.45;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .c-items li:last-child { border-bottom: none; }
+  .c-items li::before { content: '·'; position: absolute; left: 0; color: var(--gold); }
+  .c-area-value .c-items li { color: #C8B88A; }
+  .c-area-revenues .c-items li { color: #C8B88A; }
+
+  /* ─── STRATEGIC ─── */
+  .strategy-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-top: 3rem; }
+  .strategy-card {
+    background: var(--dark-3); border-radius: 6px;
+    padding: 2rem 2rem 1.8rem;
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .strategy-card:hover { border-color: rgba(200,169,75,0.25); transform: translateY(-3px); }
+  .strategy-card .s-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 3.5rem; font-weight: 500;
+    color: rgba(200,169,75,0.12);
+    position: absolute; top: 1rem; right: 1.5rem;
+    line-height: 1;
+  }
+  .strategy-card h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--white); margin-bottom: 0.8rem; }
+  .strategy-card p { font-size: 0.875rem; color: var(--text-dim); line-height: 1.75; }
+
+  /* ─── ENVIRONMENTAL ─── */
+  .env-phases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .phase-card {
+    background: var(--dark-3);
+    border-radius: 6px; padding: 2rem;
+    border-top: 3px solid transparent;
+    border-left: 1px solid rgba(255,255,255,0.05);
+    border-right: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+  }
+  .phase-card:nth-child(1) { border-top-color: #5A8A5A; }
+  .phase-card:nth-child(2) { border-top-color: var(--gold); }
+  .phase-card:nth-child(3) { border-top-color: #5A7A8A; }
+  .phase-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.15em;
+    color: var(--text-dim); margin-bottom: 0.5rem;
+  }
+  .phase-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--white); margin-bottom: 0.6rem; }
+  .phase-card p { font-size: 0.83rem; color: var(--text-dim); line-height: 1.7; }
+  .phase-result {
+    margin-top: 1rem; padding: 0.6rem 0.8rem;
+    background: rgba(255,255,255,0.03); border-radius: 3px;
+    font-size: 0.78rem; color: #9A9880; font-style: italic;
+  }
+
+  /* ─── TEAM ─── */
+  .team-section { background: var(--dark-2); padding: 5rem 4rem; }
+  .team-inner { max-width: 1200px; margin: 0 auto; }
+  .team-grid { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.5rem; }
+  .member-card {
+    background: var(--dark-3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 4px; padding: 1.2rem 1.5rem;
+    flex: 1; min-width: 160px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .member-card:hover { border-color: rgba(200,169,75,0.3); transform: translateY(-2px); }
+  .member-name { font-size: 0.9rem; color: var(--white); font-weight: 500; margin-bottom: 0.25rem; }
+  .member-ra { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--gold); }
+
+  /* ─── CONCLUSION ─── */
+  .conclusion-wrap {
+    background: linear-gradient(135deg, var(--dark-3) 0%, rgba(200,169,75,0.04) 100%);
+    border: 1px solid rgba(200,169,75,0.15);
+    border-radius: 8px; padding: 3.5rem;
+    position: relative; overflow: hidden;
+    margin-top: 3rem;
+  }
+  .conclusion-wrap::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 16rem; color: rgba(200,169,75,0.04);
+    position: absolute; top: -3rem; left: 1rem;
+    line-height: 1; pointer-events: none;
+  }
+  .conclusion-wrap p { font-size: 1rem; line-height: 1.85; color: #B0A898; position: relative; }
+  .conclusion-wrap p + p { margin-top: 1.2rem; }
+
+  /* ─── REFS ─── */
+  .refs-list { margin-top: 2rem; }
+  .refs-list li {
+    font-size: 0.82rem; color: var(--text-dim); line-height: 1.7;
+    padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    list-style: none; padding-left: 1.5rem; position: relative;
+  }
+  .refs-list li::before { content: '—'; position: absolute; left: 0; color: var(--gold); }
+  .refs-list li strong { color: #A09880; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--dark-2);
+    border-top: 1px solid rgba(200,169,75,0.1);
+    padding: 2.5rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-logo { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1rem; }
+  .footer-info { font-size: 0.75rem; color: var(--text-dim); text-align: right; line-height: 1.6; }
+
+  /* ─── SCROLL REVEAL ─── */
+  /* Visible by default — JS hides then animates in */
+  .reveal { opacity: 1; transform: none; transition: opacity 0.8s ease, transform 0.8s ease; }
+  .js-ready .reveal { opacity: 0; transform: translateY(40px); }
+  .js-ready .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 6rem 1.5rem 3rem; }
+    section { padding: 4rem 1.5rem; }
+    .intro-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .segments-grid { grid-template-columns: 1fr; }
+    .strategy-grid { grid-template-columns: 1fr; }
+    .env-phases { grid-template-columns: 1fr; }
+    .canvas-grid {
+      grid-template-areas: "value" "activities" "partners" "resources" "relations" "channels" "customers" "costs" "revenues";
+      grid-template-columns: 1fr;
+    }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+    .footer-info { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Mobile Fleet <span>/ UNIPAR 2026</span></div>
+  <ul class="nav-links">
+    <li><a href="#intro">Negócio</a></li>
+    <li><a href="#market">Mercado</a></li>
+    <li><a href="#canvas">Canvas</a></li>
+    <li><a href="#strategy">Estratégia</a></li>
+    <li><a href="#env">Ambiental</a></li>
+    <li><a href="#conclusion">Conclusão</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">Modelagem de Negócios · UNIPAR 2026</div>
+    <h1 class="hero-title">Mobile Fleet<br><em>Lubrificação Express</em></h1>
+    <p class="hero-subtitle">Análise do Modelo de Negócio com Business Model Canvas — serviço de manutenção preventiva automotiva com atendimento móvel direto ao cliente.</p>
+    <div class="hero-meta">
+      <div><strong>Marlon Luiz Ganancio</strong>Professor</div>
+      <div><strong>Administração</strong>Ciências Contábeis</div>
+      <div><strong>1º Bimestre</strong>2026</div>
+    </div>
+  </div>
+  <div class="scroll-hint">Explorar</div>
+</div>
+
+<!-- INTRODUÇÃO -->
+<section id="intro">
+  <div class="intro-grid">
+    <div class="reveal">
+      <div class="section-label">01 · Introdução</div>
+      <h2 class="section-title">Uma nova era para a manutenção de frotas</h2>
+      <div class="section-body">
+        <p>A Mobile Fleet – Lubrificação Express propõe uma solução inovadora para o setor automotivo: realizar a manutenção preventiva de veículos diretamente no local do cliente, eliminando a necessidade de deslocamento da frota até uma oficina convencional.</p>
+        <p>Desenvolvida a partir da ferramenta Business Model Canvas (Osterwalder & Pigneur, 2011), a análise estrutura o funcionamento da empresa em nove blocos estratégicos, demonstrando como o negócio cria, entrega e captura valor no mercado.</p>
+        <p>O modelo se alinha a uma tendência global de serviços on-demand para frotas — já consolidada em outros países e em fase de crescimento expressivo no Brasil, impulsionada pela crescente terceirização de serviços não essenciais entre empresas de médio e grande porte.</p>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="intro-stats">
+        <div class="stat-card">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Diferenciais competitivos centrais</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">9</div>
+          <div class="stat-label">Blocos do Business Model Canvas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">B2B</div>
+          <div class="stat-label">Foco principal em frotas corporativas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">80%</div>
+          <div class="stat-label">Alocação recomendada ao segmento B2B</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider" style="max-width:1200px; margin: 0 auto;"></div>
+
+<!-- NEGÓCIO -->
+<section>
+  <div class="reveal">
+    <div class="section-label">02 · Caracterização</div>
+    <h2 class="section-title">O Negócio</h2>
+  </div>
+  <div class="section-body reveal reveal-delay-1">
+    <p>A Mobile Fleet é uma empresa do setor automotivo especializada em troca de óleo e manutenção preventiva com atendimento móvel. O negócio oferece todos os serviços tradicionais de lubrificação com o diferencial central do deslocamento da equipe técnica até o cliente, por meio de vans adaptadas que funcionam como mini oficinas móveis.</p>
+    <p>O diferencial competitivo combina três elementos essenciais: <strong style="color:var(--gold)">(1)</strong> eliminação do tempo de parada e do deslocamento da frota; <strong style="color:var(--gold)">(2)</strong> uso de produtos homologados pelas principais montadoras (Mercedes-Benz, Volvo, Scania); e <strong style="color:var(--gold)">(3)</strong> planos de manutenção recorrentes que geram previsibilidade financeira para ambas as partes.</p>
+    <p>Um sistema digital de gestão de manutenção sustenta toda a operação, organizando históricos de troca, alertas de quilometragem e relatórios individualizados por veículo — tornando o processo rastreável, eficiente e confiável.</p>
+  </div>
+</section>
+
+<div class="divider" style="max-width:1200px; margin: 0 auto;"></div>
+
+<!-- MERCADO -->
+<section id="market">
+  <div class="reveal">
+    <div class="section-label">03 · Mercado</div>
+    <h2 class="section-title">Análise do Cliente e do Contexto</h2>
+  </div>
+  <div class="section-body reveal reveal-delay-1">
+    <p>O mercado de manutenção automotiva para frotas apresenta grande potencial de crescimento no Brasil. A tendência de terceirização de serviços não essenciais, aliada ao aumento da frota de veículos comerciais, cria demanda crescente por soluções especializadas e convenientes.</p>
+  </div>
+  <div class="segments-grid">
+    <div class="segment-card b2b reveal reveal-delay-2">
+      <span class="segment-tag">B2B · Segmento Primário</span>
+      <h3 class="segment-title">Corporativo & Frotas</h3>
+      <p class="segment-desc">Empresas detentoras de frota de veículos cuja necessidade central é reduzir o tempo de inatividade e gerir eficientemente a manutenção preventiva.</p>
+      <ul class="segment-list">
+        <li>Transportadoras e empresas de logística</li>
+        <li>Empresas de construção civil</li>
+        <li>Locadoras de veículos</li>
+        <li>Empresas de transporte de passageiros</li>
+      </ul>
+    </div>
+    <div class="segment-card b2c reveal reveal-delay-3">
+      <span class="segment-tag">B2C · Segmento Secundário</span>
+      <h3 class="segment-title">Clientes Particulares</h3>
+      <p class="segment-desc">Indivíduos que valorizam conveniência e economia de tempo, com pouca disponibilidade para levar o veículo a uma oficina tradicional.</p>
+      <ul class="segment-list">
+        <li>Motoristas de aplicativo (Uber, 99)</li>
+        <li>Proprietários de veículos premium</li>
+        <li>Profissionais autônomos com agenda restrita</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider" style="max-width:1200px; margin: 0 auto;"></div>
+
+<!-- CANVAS -->
+<div class="canvas-section" id="canvas">
+  <div class="canvas-inner">
+    <div class="canvas-header reveal">
+      <div class="section-label" style="justify-content:center">04 · Business Model Canvas</div>
+      <h2 class="section-title" style="text-align:center">Modelo de Negócio Completo</h2>
+    </div>
+    <div class="canvas-grid reveal reveal-delay-1">
+
+      <div class="c-block c-area-partners">
+        <div class="c-block-title"><span class="icon">🤝</span> Parcerias Principais</div>
+        <ul class="c-items">
+          <li>Shell, Mobil, Castrol, Petrobras, Ipiranga</li>
+          <li>MANN-FILTER, Mahle, Fram (filtros)</li>
+          <li>Distribuidores automotivos regionais</li>
+          <li>Empresas de gestão de frota</li>
+          <li>Certificadas em destinação de óleo usado</li>
+        </ul>
+      </div>
+
+      <div class="c-block c-area-activities">
+        <div class="c-block-title"><span class="icon">⚙️</span> Atividades-Chave</div>
+        <ul class="c-items">
+          <li>Troca de óleo no local do cliente</li>
+          <li>Logística de atendimento e roteirização</li>
+          <li>Gestão de estoque diversificado</li>
+          <li>Prospecção e captação de clientes B2B</li>
+          <li>Gestão da plataforma digital</li>
+        </ul>
+      </div>
+
+      <div class="c-block c-area-value">
+        <div class="c-block-title"><span class="icon">🎁</span> Proposta de Valor</div>
+        <ul class="c-items">
+          <li>Troca de óleo delivery: atendimento no local</li>
+          <li>Redução do tempo de inatividade da frota</li>
+          <li>Serviço para leves, utilitários e caminhões</li>
+          <li>Produtos homologados pelas montadoras</li>
+          <li>Histórico digital de manutenção por veículo</li>
+          <li>Plano mensal ou por quilometragem</li>
+        </ul>
+      </div>
+
+      <div class="c-block c-area-relations">
+        <div class="c-block-title"><span class="icon">💬</span> Relacionamento</div>
+        <ul class="c-items">
+          <li>Contratos de manutenção preventiva B2B</li>
+          <li>Relatórios periódicos de desempenho</li>
+          <li>Gerente de conta dedicado</li>
+          <li>Agendamento online self-service</li>
+          <li>Notificações automáticas de troca</li>
+        </ul>
+      </div>
+
+      <div class="c-block c-area-customers">
+        <div class="c-block-title"><span class="icon">👥</span> Segmentos</div>
+        <ul class="c-items">
+          <li><strong style="color:var(--gold);font-size:0.7rem">B2B</strong></li>
+          <li>Transportadoras e logística</li>
+          <li>Construtoras e locadoras</li>
+          <li><strong style="color:#7A6A44;font-size:0.7rem">B2C</strong></li>
+          <li>Motoristas de app</li>
+          <li>Veículos premium</li>
+        </ul>
+      </div>
+
+      <div class="c-block c-area-resources">
+        <div class="c-block-title"><span class="icon">🔧</span> Recursos Principais</div>
+        <ul class="c-items">
+          <li>Van adaptada (mini oficina móvel)</li>
+          <li>Equipamentos de troca e bombas</li>
+          <li>Estoque de lubrificantes e filtros</li>
+          <li>Sistema de gestão de manutenção (TI)</li>
+          <li>Técnicos e vendedor B2B</li>
+        </ul>
+      </div>
+
+      <div class="c-block c-area-channels">
+        <div class="c-block-title"><span class="icon">📡</span> Canais</div>
+        <ul class="c-items">
+          <li>Website com agendamento online</li>
+          <li>WhatsApp Business</li>
+          <li>Google Meu Negócio / Instagram</li>
+          <li>Vendedor B2B com visita ativa</li>
+          <li>Indicação (boca a boca)</li>
+        </ul>
+      </div>
+
+      <div class="c-block c-area-costs">
+        <div class="c-block-title"><span class="icon">📋</span> Estrutura de Custos</div>
+        <ul class="c-items">
+          <li>Financiamento da van</li>
+          <li>Salários da equipe</li>
+          <li>Seguro e sistema de gestão</li>
+          <li>Lubrificantes e filtros</li>
+          <li>Combustível da van</li>
+          <li>Descarte de óleo usado</li>
+          <li>Manutenção da van</li>
+          <li>Marketing digital</li>
+        </ul>
+      </div>
+
+      <div class="c-block c-area-revenues">
+        <div class="c-block-title"><span class="icon">💰</span> Fontes de Receita</div>
+        <ul class="c-items">
+          <li>Troca de óleo completa (avulsa)</li>
+          <li>Filtros de ar, cabine e combustível</li>
+          <li>Fluidos hidráulicos e de freio</li>
+          <li><strong style="color:var(--gold)">Plano Frota</strong> — contrato mensal por veículo</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ESTRATÉGIA -->
+<section id="strategy">
+  <div class="reveal">
+    <div class="section-label">05 · Análise Estratégica</div>
+    <h2 class="section-title">Como o Negócio Cria e Captura Valor</h2>
+  </div>
+  <div class="strategy-grid">
+    <div class="strategy-card reveal reveal-delay-1">
+      <div class="s-num">01</div>
+      <h3>Valor Entregue ao Cliente</h3>
+      <p>A Mobile Fleet gera valor ao eliminar custos indiretos de deslocamento e reduzir o tempo de inatividade da frota. Para o B2B, veículos parados representam prejuízo operacional direto — a proposta tem impacto financeiro imediato e mensurável. A plataforma digital cria fidelização e viabiliza contratos recorrentes de longo prazo.</p>
+    </div>
+    <div class="strategy-card reveal reveal-delay-2">
+      <div class="s-num">02</div>
+      <h3>Geração de Receita</h3>
+      <p>O modelo opera com múltiplas fontes: serviços avulsos (troca completa + complementares) e o Plano Frota — contrato mensal por veículo, a fonte mais estratégica pela recorrência e previsibilidade de caixa que gera para a operação.</p>
+    </div>
+    <div class="strategy-card reveal reveal-delay-3">
+      <div class="s-num">03</div>
+      <h3>Recursos Críticos</h3>
+      <p>Van adaptada com equipamentos específicos, estoque diversificado de lubrificantes e filtros, sistema digital de gestão e equipe técnica especializada. O vendedor B2B dedicado à prospecção de contratos corporativos é igualmente essencial para escalar o modelo.</p>
+    </div>
+    <div class="strategy-card reveal reveal-delay-4">
+      <div class="s-num">04</div>
+      <h3>Desafios e Riscos</h3>
+      <p>Logística de deslocamento (otimização de rotas é crítica para as margens), gestão do estoque de filtros (ampla variedade pode gerar capital parado), precificação do serviço delivery e validação efetiva da demanda B2B antes de escalar a operação.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider" style="max-width:1200px; margin: 0 auto;"></div>
+
+<!-- AMBIENTAL -->
+<section id="env">
+  <div class="reveal">
+    <div class="section-label">05.1 · Conformidade Ambiental</div>
+    <h2 class="section-title">Licenciamento Ambiental</h2>
+  </div>
+  <div class="section-body reveal reveal-delay-1">
+    <p>Por manusear resíduos de óleos lubrificantes usados (resíduos perigosos), a Mobile Fleet está sujeita à Resolução CONAMA n.º 362/2005, à Lei n.º 12.305/2010 (PNRS) e à Resolução CEMA n.º 107/2020 do Paraná. A conformidade ambiental é também um diferencial competitivo, pois empresas de frota exigem cada vez mais de seus fornecedores a comprovação de práticas sustentáveis.</p>
+  </div>
+  <div class="env-phases">
+    <div class="phase-card reveal reveal-delay-1">
+      <div class="phase-num">FASE 01 / 03</div>
+      <h3>Licença Prévia (LP)</h3>
+      <p>Avalia a viabilidade ambiental do empreendimento antes de qualquer obra ou operação. Exige Estudo de Impacto Ambiental (EIA) e Relatório de Impacto (RIMA).</p>
+      <div class="phase-result">✦ Fase de análise — empresa não pode construir nem operar</div>
+    </div>
+    <div class="phase-card reveal reveal-delay-2">
+      <div class="phase-num">FASE 02 / 03</div>
+      <h3>Licença de Instalação (LI)</h3>
+      <p>Autoriza a instalação conforme os projetos aprovados na LP. Exige projetos executivos e programas de controle ambiental.</p>
+      <div class="phase-result">✦ Empresa pode instalar e construir — sem iniciar operações</div>
+    </div>
+    <div class="phase-card reveal reveal-delay-3">
+      <div class="phase-num">FASE 03 / 03</div>
+      <h3>Licença de Operação (LO)</h3>
+      <p>Autoriza o início efetivo das operações. Exige relatórios de conformidade comprovando atendimento a todas as condicionantes anteriores.</p>
+      <div class="phase-result">✦ Empreendimento autorizado a abrir e operar</div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPE -->
+<div class="team-section">
+  <div class="team-inner">
+    <div class="section-label reveal">Grupo de Trabalho</div>
+    <div class="team-grid">
+      <div class="member-card reveal reveal-delay-1">
+        <div class="member-name">Bruno Vallim Enumo</div>
+        <div class="member-ra">RA 60006167</div>
+      </div>
+      <div class="member-card reveal reveal-delay-2">
+        <div class="member-name">Eduardo Henrique Zuffo</div>
+        <div class="member-ra">RA 60009637</div>
+      </div>
+      <div class="member-card reveal reveal-delay-3">
+        <div class="member-name">Márcio Eller</div>
+        <div class="member-ra">RA 60007883</div>
+      </div>
+      <div class="member-card reveal reveal-delay-4">
+        <div class="member-name">Miguel de Lima Balani</div>
+        <div class="member-ra">RA 60006229</div>
+      </div>
+      <div class="member-card reveal reveal-delay-4">
+        <div class="member-name">Renan Tuci Afonso</div>
+        <div class="member-ra">RA 60005425</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCLUSÃO -->
+<section id="conclusion">
+  <div class="reveal">
+    <div class="section-label">06 · Considerações Finais</div>
+    <h2 class="section-title">Conclusão</h2>
+  </div>
+  <div class="conclusion-wrap reveal reveal-delay-1">
+    <p>A análise do modelo de negócio da Mobile Fleet – Lubrificação Express demonstra que a proposta possui forte alinhamento com as tendências do setor automotivo brasileiro, caracterizado pelo crescimento da terceirização de serviços, pela busca por eficiência operacional e pela crescente valorização da conveniência.</p>
+    <p>A estrutura do Business Model Canvas revela um modelo internamente coerente: a proposta de valor é clara e diretamente endereçada às dores dos dois segmentos identificados; os canais são adequados ao perfil de cada público; e as fontes de receita são diversificadas, com destaque para o Plano Frota, que garante recorrência e previsibilidade financeira.</p>
+    <p>Recomenda-se iniciar com foco de <strong style="color:var(--gold)">80% no segmento B2B</strong>, por ser o de maior potencial de contratos recorrentes e escalabilidade. O planejamento prévio do licenciamento ambiental trifásico é fundamental — sem a Licença de Operação, a empresa não pode iniciar suas atividades. A Mobile Fleet é uma ideia inovadora e viável, com real potencial de mercado no setor automotivo regional.</p>
+  </div>
+</section>
+
+<div class="divider" style="max-width:1200px; margin: 0 auto;"></div>
+
+<!-- REFERÊNCIAS -->
+<section>
+  <div class="reveal">
+    <div class="section-label">Referências</div>
+  </div>
+  <ul class="refs-list reveal reveal-delay-1">
+    <li>BRASIL. <strong>Lei n.º 12.305, de 2 de agosto de 2010.</strong> Institui a Política Nacional de Resíduos Sólidos. Brasília, 2010.</li>
+    <li>CONAMA. <strong>Resolução n.º 362, de 23 de junho de 2005.</strong> Destinação final de óleo lubrificante usado. Brasília, 2005.</li>
+    <li>DORNELAS, José Carlos Assis. <strong>Empreendedorismo: transformando ideias em negócios.</strong> 7. ed. São Paulo: Atlas, 2018.</li>
+    <li>IAT. <strong>Licenciamento ambiental para oficinas mecânicas.</strong> Curitiba: IAT/SEMA-PR, 2020.</li>
+    <li>OSTERWALDER, A.; PIGNEUR, Y. <strong>Business model generation: inovação em modelos de negócios.</strong> Rio de Janeiro: Alta Books, 2011.</li>
+    <li>OSTERWALDER, A.; PIGNEUR, Y.; BERNARDA, G.; SMITH, A. <strong>Value proposition design.</strong> Rio de Janeiro: Alta Books, 2015.</li>
+    <li>PARANÁ. CEMA. <strong>Resolução n.º 107, de 2020.</strong> Licenciamento ambiental. Curitiba: CEMA, 2020.</li>
+    <li>RIES, Eric. <strong>A startup enxuta (The Lean Startup).</strong> São Paulo: Leya, 2012.</li>
+    <li>SEBRAE. <strong>Modelagem de negócios: guia prático para empreendedores.</strong> Brasília: Sebrae, 2021.</li>
+  </ul>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Mobile Fleet · Lubrificação Express</div>
+  <div class="footer-info">
+    UNIPAR · Universidade Paranaense · Umuarama – PR<br>
+    Disciplina: Modelagem de Negócios · Prof. Marlon Luiz Ganancio · 2026
+  </div>
+</footer>
+
+<script>
+  // Add class FIRST so CSS can hide elements, then observe
+  document.documentElement.classList.add('js-ready');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
