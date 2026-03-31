@@ -404,6 +404,29 @@
   .footer-logo { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1rem; }
   .footer-info { font-size: 0.75rem; color: var(--text-dim); text-align: right; line-height: 1.6; }
 
+  /* ─── BOTÃO PDF ─── */
+  .pdf-btn {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.75rem 1.4rem;
+    background: var(--dark-3);
+    border: 1px solid rgba(200,169,75,0.4);
+    border-radius: 4px;
+    color: var(--gold);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    transition: background 0.25s, border-color 0.25s, transform 0.2s;
+  }
+  .pdf-btn:hover {
+    background: var(--dark-4);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+  .pdf-btn svg { flex-shrink: 0; }
+
   /* ─── SCROLL REVEAL ─── */
   /* Visible by default — JS hides then animates in */
   .reveal { opacity: 1; transform: none; transition: opacity 0.8s ease, transform 0.8s ease; }
@@ -521,9 +544,257 @@
     footer { flex-direction: column; gap: 1rem; text-align: center; }
     .footer-info { text-align: center; }
   }
+
+  /* ═══════════════════════════════════════════════
+     @media print — versão para impressão / PDF
+     Estratégia: fundo branco, texto escuro,
+     ocultar elementos de UI, layout linear limpo
+  ═══════════════════════════════════════════════ */
+  @media print {
+
+    /* ── Configuração de página ── */
+    @page {
+      size: A4 portrait;
+      margin: 18mm 16mm 18mm 16mm;
+    }
+    @page :first { margin-top: 12mm; }
+
+    /* ── Reset de cores para branco/preto ── */
+    :root {
+      --gold: #8B6914;
+      --gold-light: #A08030;
+      --gold-dim: rgba(139,105,20,0.15);
+      --dark: #ffffff;
+      --dark-2: #f8f8f8;
+      --dark-3: #f2f2f2;
+      --dark-4: #ebebeb;
+      --text: #1a1a1a;
+      --text-dim: #555555;
+      --white: #1a1a1a;
+    }
+
+    /* ── Elementos a ocultar ── */
+    nav,
+    .nav-hamburger,
+    .mobile-menu,
+    .hero-bg,
+    .hero-lines,
+    .scroll-hint,
+    .hero-badge,
+    .hero-meta,
+    .divider,
+    .pdf-btn,
+    body::before { display: none !important; }
+
+    /* ── Reset de body/html ── */
+    html, body {
+      background: #fff !important;
+      color: #1a1a1a !important;
+      font-size: 11pt;
+      overflow: visible !important;
+    }
+
+    /* ── Forçar visibilidade (ignora js-ready) ── */
+    .js-ready .reveal,
+    .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    /* ── Hero: vira capa compacta ── */
+    .hero {
+      min-height: auto !important;
+      padding: 0 0 2rem 0 !important;
+      display: block !important;
+      background: #fff !important;
+      page-break-after: always;
+    }
+    .hero-inner { text-align: center; padding: 2rem 0 1rem; }
+    .hero-title {
+      font-size: 28pt !important;
+      color: #8B6914 !important;
+      margin-bottom: 0.8rem !important;
+    }
+    .hero-title em { color: #6A4A0A !important; }
+    .hero-subtitle {
+      font-size: 11pt !important;
+      color: #444 !important;
+      max-width: 100% !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* ── Equipe: logo após capa ── */
+    .team-section {
+      background: #f8f8f8 !important;
+      padding: 1.5rem 0 !important;
+      page-break-after: avoid;
+    }
+    .team-inner { max-width: 100% !important; }
+    .team-grid {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 0.6rem !important;
+    }
+    .member-card {
+      background: #fff !important;
+      border: 1px solid #ddd !important;
+      padding: 0.6rem 1rem !important;
+      min-width: 160px !important;
+      flex: 1 !important;
+    }
+    .member-name { color: #1a1a1a !important; font-size: 9pt !important; }
+    .member-ra   { color: #8B6914 !important; font-size: 8pt !important; }
+
+    /* ── Sections gerais ── */
+    section {
+      max-width: 100% !important;
+      padding: 1.5rem 0 !important;
+      page-break-inside: avoid;
+    }
+    section[id="intro"] { page-break-before: always; }
+
+    .section-label {
+      color: #8B6914 !important;
+      font-size: 7pt !important;
+    }
+    .section-label::after { background: #8B6914 !important; opacity: 0.5; }
+
+    .section-title {
+      color: #1a1a1a !important;
+      font-size: 16pt !important;
+      margin-bottom: 0.8rem !important;
+    }
+    .section-body { color: #333 !important; max-width: 100% !important; }
+    .section-body p { font-size: 10pt !important; }
+
+    /* ── Intro grid: coluna única ── */
+    .intro-grid { grid-template-columns: 1fr !important; gap: 1rem !important; }
+    .intro-stats { grid-template-columns: repeat(4, 1fr) !important; gap: 0.6rem !important; margin-top: 1rem !important; }
+    .stat-card {
+      background: #f2f2f2 !important;
+      border: 1px solid #ddd !important;
+      padding: 0.8rem !important;
+    }
+    .stat-num { color: #8B6914 !important; font-size: 16pt !important; }
+    .stat-label { color: #555 !important; font-size: 8pt !important; }
+
+    /* ── Segmentos ── */
+    .segments-grid { grid-template-columns: 1fr 1fr !important; gap: 0.8rem !important; }
+    .segment-card {
+      background: #f8f8f8 !important;
+      border: 1px solid #ddd !important;
+      page-break-inside: avoid;
+    }
+    .segment-card::before { background: #8B6914 !important; }
+    .segment-tag { color: #8B6914 !important; background: rgba(139,105,20,0.08) !important; font-size: 7pt !important; }
+    .segment-title { color: #1a1a1a !important; font-size: 12pt !important; }
+    .segment-desc { color: #444 !important; font-size: 9pt !important; }
+    .segment-list li { color: #555 !important; font-size: 9pt !important; }
+    .segment-list li::before { color: #8B6914 !important; }
+
+    /* ── Canvas ── */
+    .canvas-section {
+      background: #fff !important;
+      padding: 1.5rem 0 !important;
+      page-break-before: always;
+    }
+    .canvas-inner { max-width: 100% !important; }
+    .canvas-header .section-title { text-align: center !important; }
+    .canvas-grid {
+      grid-template-areas:
+        "partners partners activities activities value value relations relations customers customers"
+        "partners partners resources  resources  value value channels  channels  customers customers"
+        "costs    costs    costs      costs      costs  revenues revenues revenues revenues revenues" !important;
+      grid-template-columns: repeat(10, 1fr) !important;
+      background: rgba(139,105,20,0.12) !important;
+      border: 1px solid rgba(139,105,20,0.25) !important;
+      min-height: auto !important;
+      gap: 1px !important;
+      font-size: 8pt !important;
+    }
+    .c-block {
+      background: #f8f8f8 !important;
+      padding: 0.7rem !important;
+      page-break-inside: avoid;
+    }
+    .c-block:hover { background: #f8f8f8 !important; }
+    .c-block-title {
+      color: #8B6914 !important;
+      font-size: 6.5pt !important;
+      margin-bottom: 0.4rem !important;
+    }
+    .c-items li {
+      color: #444 !important;
+      font-size: 8pt !important;
+      border-bottom-color: rgba(0,0,0,0.06) !important;
+    }
+    .c-items li::before { color: #8B6914 !important; }
+
+    /* ── Estratégia ── */
+    .strategy-grid { grid-template-columns: 1fr 1fr !important; gap: 0.8rem !important; page-break-before: always; }
+    .strategy-card {
+      background: #f8f8f8 !important;
+      border: 1px solid #ddd !important;
+      page-break-inside: avoid;
+    }
+    .strategy-card .s-num { color: rgba(139,105,20,0.15) !important; font-size: 28pt !important; }
+    .strategy-card h3 { color: #1a1a1a !important; font-size: 11pt !important; }
+    .strategy-card p  { color: #444 !important; font-size: 9pt !important; }
+
+    /* ── Ambiental ── */
+    .env-phases { grid-template-columns: repeat(3, 1fr) !important; gap: 0.8rem !important; }
+    .phase-card {
+      background: #f8f8f8 !important;
+      border: 1px solid #ddd !important;
+      page-break-inside: avoid;
+    }
+    .phase-num  { color: #777 !important; font-size: 7pt !important; }
+    .phase-card h3 { color: #1a1a1a !important; font-size: 10pt !important; }
+    .phase-card p  { color: #444 !important; font-size: 8.5pt !important; }
+    .phase-result  { background: rgba(0,0,0,0.04) !important; color: #555 !important; font-size: 8pt !important; }
+
+    /* ── Conclusão ── */
+    .conclusion-wrap {
+      background: #f8f8f8 !important;
+      border: 1px solid #ddd !important;
+      page-break-inside: avoid;
+    }
+    .conclusion-wrap::before { color: rgba(139,105,20,0.06) !important; }
+    .conclusion-wrap p { color: #333 !important; font-size: 10pt !important; }
+
+    /* ── Referências ── */
+    .refs-list li { color: #444 !important; border-bottom-color: rgba(0,0,0,0.06) !important; font-size: 9pt !important; }
+    .refs-list li::before { color: #8B6914 !important; }
+    .refs-list li strong { color: #333 !important; }
+
+    /* ── Footer ── */
+    footer {
+      background: #f2f2f2 !important;
+      border-top: 1px solid #ddd !important;
+      padding: 1rem !important;
+      flex-direction: row !important;
+      page-break-before: avoid;
+    }
+    .footer-logo { color: #8B6914 !important; font-size: 9pt !important; }
+    .footer-info  { color: #666 !important; font-size: 8pt !important; text-align: right !important; }
+
+    /* ── Links: sem underline ── */
+    a { color: inherit !important; text-decoration: none !important; }
+  }
 </style>
 </head>
 <body id="top">
+
+<!-- BOTÃO PDF -->
+<button class="pdf-btn" id="pdfBtn" title="Gerar PDF">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <line x1="12" y1="18" x2="12" y2="12"/>
+    <line x1="9" y1="15" x2="15" y2="15"/>
+  </svg>
+  Gerar PDF
+</button>
 
 <!-- NAV -->
 <nav>
@@ -970,6 +1241,13 @@
   // Close on Escape key
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeMenu();
+  });
+  // ── Botão PDF ──
+  document.getElementById('pdfBtn').addEventListener('click', () => {
+    // Garante que todos os elementos revelados estão visíveis antes de imprimir
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    // Pequeno delay para o browser processar antes de abrir o diálogo
+    setTimeout(() => window.print(), 120);
   });
 </script>
 </body>
