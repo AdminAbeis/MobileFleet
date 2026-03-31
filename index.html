@@ -50,10 +50,17 @@
   }
   .nav-logo {
     font-family: 'Playfair Display', serif;
-    font-size: 1.1rem; font-weight: 700;
+    font-size: 1.05rem; font-weight: 700;
     color: var(--gold); letter-spacing: 0.05em;
+    text-decoration: none; cursor: pointer;
+    display: flex; flex-direction: column;
+    line-height: 1.25;
   }
-  .nav-logo span { color: var(--text-dim); font-weight: 400; }
+  .nav-logo span {
+    font-size: 0.62rem; font-weight: 400;
+    color: var(--text-dim); letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
   .nav-links { display: flex; gap: 2.5rem; list-style: none; }
   .nav-links a {
     font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em;
@@ -248,10 +255,10 @@
   .canvas-grid {
     display: grid;
     grid-template-areas:
-      "partners activities value relations customers"
-      "partners resources  value channels  customers"
-      "costs    costs      costs revenues  revenues";
-    grid-template-columns: 1.2fr 1fr 1.2fr 1fr 1fr;
+      "partners partners activities activities value value relations relations customers customers"
+      "partners partners resources  resources  value value channels  channels  customers customers"
+      "costs    costs    costs      costs      costs  revenues revenues revenues revenues revenues";
+    grid-template-columns: repeat(10, 1fr);
     grid-template-rows: 1fr 1fr auto;
     gap: 1px;
     background: rgba(200,169,75,0.1);
@@ -265,6 +272,11 @@
     transition: background 0.3s;
   }
   .c-block:hover { background: var(--dark-4); }
+
+  /* ─── SCROLL OFFSET (compensa nav fixo ~72px) ─── */
+  section[id], div[id], .team-section {
+    scroll-margin-top: var(--nav-h, 72px);
+  }
   .c-area-partners  { grid-area: partners; }
   .c-area-activities{ grid-area: activities; }
   .c-area-value     { grid-area: value; background: rgba(200,169,75,0.04); border-left: 2px solid rgba(200,169,75,0.3); }
@@ -402,10 +414,100 @@
   .reveal-delay-3 { transition-delay: 0.3s; }
   .reveal-delay-4 { transition-delay: 0.4s; }
 
+  /* ─── HAMBURGER / MOBILE MENU ─── */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column; justify-content: center; gap: 5px;
+    width: 36px; height: 36px; cursor: pointer;
+    background: none; border: none; padding: 4px;
+    z-index: 200;
+  }
+  .nav-hamburger span {
+    display: block; height: 2px; border-radius: 2px;
+    background: var(--gold);
+    transition: transform 0.35s ease, opacity 0.35s ease, width 0.35s ease;
+    transform-origin: center;
+  }
+  .nav-hamburger span:nth-child(3) { width: 60%; }
+
+  /* Open state */
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav-hamburger.open span:nth-child(3) { width: 100%; transform: translateY(-7px) rotate(-45deg); }
+
+  /* Mobile menu overlay */
+  .mobile-menu {
+    display: none;
+    position: fixed; inset: 0; z-index: 150;
+    background: rgba(10,10,8,0.97);
+    backdrop-filter: blur(16px);
+    flex-direction: column; align-items: center;
+    justify-content: flex-start;       /* não centraliza — permite scroll natural */
+    gap: 0;
+    overflow-y: auto;                  /* rola quando o conteúdo ultrapassa a altura */
+    -webkit-overflow-scrolling: touch; /* scroll suave no iOS */
+    padding: max(5rem, 12vh) 0 3rem;   /* espaço no topo (nav) e margem inferior */
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+  .mobile-menu.open {
+    opacity: 1; pointer-events: all;
+  }
+  .mobile-menu a {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 5vw, 2.2rem);
+    font-weight: 700; color: var(--text-dim);
+    text-decoration: none; letter-spacing: 0.05em;
+    padding: 0.6rem 2rem;
+    position: relative; display: block;
+    flex-shrink: 0;                    /* impede que itens sejam espremidos */
+    transition: color 0.25s;
+  }
+  .mobile-menu a::after {
+    content: ''; position: absolute; bottom: 0.4rem; left: 2rem;
+    width: 0; height: 1px; background: var(--gold);
+    transition: width 0.3s ease;
+  }
+  .mobile-menu a:hover { color: var(--gold); }
+  .mobile-menu a:hover::after { width: calc(100% - 4rem); }
+
+  /* Landscape com pouca altura: fonte e espaçamento menores */
+  @media (orientation: landscape) and (max-height: 520px) {
+    .mobile-menu {
+      padding: max(4rem, 10vh) 0 2rem;
+    }
+    .mobile-menu a {
+      font-size: clamp(1rem, 4vw, 1.4rem);
+      padding: 0.4rem 2rem;
+    }
+    .mobile-menu-divider { margin: 0.2rem 0; }
+  }
+  .mobile-menu-divider {
+    width: 40px; height: 1px;
+    background: rgba(200,169,75,0.25);
+    margin: 0.5rem 0;
+  }
+
   /* ─── RESPONSIVE ─── */
-  @media (max-width: 900px) {
+
+  /* Tela média-grande: reduz padding e gap do nav */
+  @media (max-width: 1280px) {
+    nav { padding: 1.2rem 2.5rem; }
+    .nav-links { gap: 1.8rem; }
+  }
+
+  /* Tela média: comprime mais antes de cair no hambúrguer */
+  @media (max-width: 1100px) {
+    nav { padding: 1rem 1.8rem; }
+    .nav-links { gap: 1.2rem; }
+    .nav-links a { font-size: 0.72rem; letter-spacing: 0.08em; }
+  }
+
+  @media (max-width: 1024px) {
     nav { padding: 1rem 1.5rem; }
     .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .mobile-menu { display: flex; }
     .hero { padding: 6rem 1.5rem 3rem; }
     section { padding: 4rem 1.5rem; }
     .intro-grid { grid-template-columns: 1fr; gap: 3rem; }
@@ -421,12 +523,14 @@
   }
 </style>
 </head>
-<body>
+<body id="top">
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">Mobile Fleet <span>/ UNIPAR 2026</span></div>
+    <a href="#top" class="nav-logo">Mobile Fleet<span>Lubrificação Express</span></a>
   <ul class="nav-links">
+    <li><a href="#top">Início</a></li>
+    <li><a href="#team">Equipe</a></li>
     <li><a href="#intro">Negócio</a></li>
     <li><a href="#market">Mercado</a></li>
     <li><a href="#canvas">Canvas</a></li>
@@ -434,7 +538,29 @@
     <li><a href="#env">Ambiental</a></li>
     <li><a href="#conclusion">Conclusão</a></li>
   </ul>
+  <button class="nav-hamburger" id="menuBtn" aria-label="Abrir menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU OVERLAY -->
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Menu de navegação">
+  <a href="#top"         class="menu-link">Início</a>
+  <div class="mobile-menu-divider"></div>
+  <a href="#team"        class="menu-link">Equipe</a>
+  <div class="mobile-menu-divider"></div>
+  <a href="#intro"       class="menu-link">Negócio</a>
+  <div class="mobile-menu-divider"></div>
+  <a href="#market"      class="menu-link">Mercado</a>
+  <div class="mobile-menu-divider"></div>
+  <a href="#canvas"      class="menu-link">Canvas</a>
+  <div class="mobile-menu-divider"></div>
+  <a href="#strategy"    class="menu-link">Estratégia</a>
+  <div class="mobile-menu-divider"></div>
+  <a href="#env"         class="menu-link">Ambiental</a>
+  <div class="mobile-menu-divider"></div>
+  <a href="#conclusion"  class="menu-link">Conclusão</a>
+</div>
 
 <!-- HERO -->
 <div class="hero">
@@ -443,6 +569,7 @@
   <div class="hero-inner">
     <div class="hero-badge">Modelagem de Negócios · UNIPAR 2026</div>
     <h1 class="hero-title">Mobile Fleet<br><em>Lubrificação Express</em></h1>
+
     <p class="hero-subtitle">Análise do Modelo de Negócio com Business Model Canvas — serviço de manutenção preventiva automotiva com atendimento móvel direto ao cliente.</p>
     <div class="hero-meta">
       <div><strong>Marlon Luiz Ganancio</strong>Professor</div>
@@ -450,8 +577,37 @@
       <div><strong>1º Bimestre</strong>2026</div>
     </div>
   </div>
-  <div class="scroll-hint">Explorar</div>
+  <div class="scroll-hint"></div>
 </div>
+<!-- EQUIPE -->
+<div class="team-section" id="team">
+  <div class="team-inner">
+    <div class="section-label reveal">Grupo de Trabalho</div>
+    <div class="team-grid">
+      <div class="member-card reveal reveal-delay-1">
+        <div class="member-name">Bruno Vallim Enumo</div>
+        <div class="member-ra">RA 60006167</div>
+      </div>
+      <div class="member-card reveal reveal-delay-2">
+        <div class="member-name">Eduardo Henrique Zuffo</div>
+        <div class="member-ra">RA 60009637</div>
+      </div>
+      <div class="member-card reveal reveal-delay-3">
+        <div class="member-name">Márcio Eller</div>
+        <div class="member-ra">RA 60007883</div>
+      </div>
+      <div class="member-card reveal reveal-delay-4">
+        <div class="member-name">Miguel de Lima Balani</div>
+        <div class="member-ra">RA 60006229</div>
+      </div>
+      <div class="member-card reveal reveal-delay-4">
+        <div class="member-name">Renan Tuci Afonso</div>
+        <div class="member-ra">RA 60005425</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- INTRODUÇÃO -->
 <section id="intro">
@@ -719,35 +875,6 @@
   </div>
 </section>
 
-<!-- EQUIPE -->
-<div class="team-section">
-  <div class="team-inner">
-    <div class="section-label reveal">Grupo de Trabalho</div>
-    <div class="team-grid">
-      <div class="member-card reveal reveal-delay-1">
-        <div class="member-name">Bruno Vallim Enumo</div>
-        <div class="member-ra">RA 60006167</div>
-      </div>
-      <div class="member-card reveal reveal-delay-2">
-        <div class="member-name">Eduardo Henrique Zuffo</div>
-        <div class="member-ra">RA 60009637</div>
-      </div>
-      <div class="member-card reveal reveal-delay-3">
-        <div class="member-name">Márcio Eller</div>
-        <div class="member-ra">RA 60007883</div>
-      </div>
-      <div class="member-card reveal reveal-delay-4">
-        <div class="member-name">Miguel de Lima Balani</div>
-        <div class="member-ra">RA 60006229</div>
-      </div>
-      <div class="member-card reveal reveal-delay-4">
-        <div class="member-name">Renan Tuci Afonso</div>
-        <div class="member-ra">RA 60005425</div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- CONCLUSÃO -->
 <section id="conclusion">
   <div class="reveal">
@@ -783,7 +910,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">Mobile Fleet · Lubrificação Express</div>
+    <div class="footer-logo">Mobile Fleet · Lubrificação Express</div>
   <div class="footer-info">
     UNIPAR · Universidade Paranaense · Umuarama – PR<br>
     Disciplina: Modelagem de Negócios · Prof. Marlon Luiz Ganancio · 2026
@@ -797,6 +924,45 @@
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.08 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── Nav height dinâmico → compensa scroll das âncoras ──
+  const navEl = document.querySelector('nav');
+  function setNavHeight() {
+    document.documentElement.style.setProperty('--nav-h', navEl.offsetHeight + 'px');
+  }
+  setNavHeight();
+  window.addEventListener('resize', setNavHeight);
+
+  // ── Hamburger menu ──
+  const btn  = document.getElementById('menuBtn');
+  const menu = document.getElementById('mobileMenu');
+
+  function openMenu() {
+    btn.classList.add('open');
+    menu.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    btn.classList.remove('open');
+    menu.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', () => {
+    btn.classList.contains('open') ? closeMenu() : openMenu();
+  });
+
+  // Close on link click + scroll to section
+  document.querySelectorAll('.menu-link').forEach(link => {
+    link.addEventListener('click', () => closeMenu());
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMenu();
+  });
 </script>
 </body>
 </html>
