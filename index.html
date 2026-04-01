@@ -325,6 +325,15 @@
   }
   .strategy-card h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--white); margin-bottom: 0.8rem; }
   .strategy-card p { font-size: 0.875rem; color: var(--text-dim); line-height: 1.75; }
+  .strategy-card p + p { margin-top: 0.8rem; }
+  .strategy-list { list-style: none; margin-top: 0.6rem; }
+  .strategy-list li {
+    font-size: 0.86rem; color: var(--text-dim); line-height: 1.65;
+    padding: 0.3rem 0 0.3rem 1rem; position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .strategy-list li:last-child { border-bottom: none; }
+  .strategy-list li::before { content: '›'; position: absolute; left: 0; color: var(--gold); }
 
   /* ─── ENVIRONMENTAL ─── */
   .env-phases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
@@ -353,20 +362,116 @@
     font-size: 0.78rem; color: #9A9880; font-style: italic;
   }
 
-  /* ─── TEAM ─── */
+  /* ─── TEAM — FLIP CARDS ─── */
   .team-section { background: var(--dark-2); padding: 5rem 4rem; }
   .team-inner { max-width: 1200px; margin: 0 auto; }
-  .team-grid { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.5rem; }
-  .member-card {
-    background: var(--dark-3);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 4px; padding: 1.2rem 1.5rem;
-    flex: 1; min-width: 160px;
-    transition: border-color 0.3s, transform 0.3s;
+  .team-grid {
+    display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 2.5rem;
   }
-  .member-card:hover { border-color: rgba(200,169,75,0.3); transform: translateY(-2px); }
-  .member-name { font-size: 0.9rem; color: var(--white); font-weight: 500; margin-bottom: 0.25rem; }
-  .member-ra { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--gold); }
+
+  /* Wrapper externo: define perspectiva e tamanho fixo */
+  .member-card {
+    flex: 1; min-width: 175px; max-width: 240px;
+    height: 140px;
+    perspective: 1200px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  /* Camada que gira */
+  .mc-inner {
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Hover no desktop */
+  body:not(.touch-device) .member-card:hover .mc-inner {
+    transform: rotateY(180deg);
+  }
+  /* Tap no mobile */
+  .member-card.tapped .mc-inner {
+    transform: rotateY(180deg);
+  }
+
+  /* Faces compartilhadas */
+  .mc-front, .mc-back {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+
+  /* ── FRENTE ── */
+  .mc-front {
+    background: var(--dark-3);
+    padding: 1.2rem 1.5rem;
+    display: flex; flex-direction: column; justify-content: space-between;
+    border-top: 2px solid rgba(200,169,75,0.35);
+    transition: border-color 0.3s;
+  }
+  .member-card:hover .mc-front { border-top-color: var(--gold); }
+
+  .member-name { font-size: 0.88rem; color: var(--white); font-weight: 500; line-height: 1.3; }
+  .member-ra   { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--gold); margin-top: 0.2rem; }
+  .member-course {
+    font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.06em;
+    text-transform: uppercase; margin-top: 0.5rem;
+  }
+  .mc-hint {
+    font-size: 0.6rem; color: var(--gold); opacity: 0.5;
+    font-style: italic; margin-top: 0.4rem;
+  }
+
+  /* ── VERSO ── */
+  .mc-back {
+    background: var(--dark-3);
+    border-top: 2px solid var(--gold);
+    transform: rotateY(180deg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
+  /* Placeholder de foto — círculo dourado com inicial */
+  .mc-photo {
+    width: 54px; height: 54px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold) 0%, #8B6914 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 700;
+    color: var(--dark); flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(200,169,75,0.3);
+    overflow: hidden;
+  }
+  .mc-photo img {
+    width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+  }
+  .mc-back-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.8rem; font-weight: 700;
+    color: var(--gold); text-align: center; line-height: 1.3;
+  }
+  .mc-back-course {
+    font-size: 0.62rem; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    text-align: center;
+  }
+
+  /* Print: sem flip, mostra frente simples */
+  @media print {
+    .member-card { height: auto !important; perspective: none !important; }
+    .mc-inner { transform: none !important; transform-style: flat !important; }
+    .mc-back { display: none !important; }
+    .mc-front {
+      position: static !important;
+      backface-visibility: visible !important;
+    }
+  }
+
 
   /* ─── CONCLUSION ─── */
   .conclusion-wrap {
@@ -385,6 +490,12 @@
   }
   .conclusion-wrap p { font-size: 1rem; line-height: 1.85; color: #B0A898; position: relative; }
   .conclusion-wrap p + p { margin-top: 1.2rem; }
+  .conclusion-wrap h3 {
+    font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700;
+    color: var(--white); margin-top: 1.4rem; margin-bottom: 0.7rem; position: relative;
+  }
+  .conclusion-wrap .strategy-list { margin-top: 0.6rem; }
+  .conclusion-wrap .strategy-list li { color: #B0A898; }
 
   /* ─── REFS ─── */
   .refs-list { margin-top: 2rem; }
@@ -638,14 +749,23 @@
       gap: 0.6rem !important;
     }
     .member-card {
+      height: auto !important;
+      perspective: none !important;
+      min-width: 120px !important;
+    }
+    .mc-inner { transform: none !important; transform-style: flat !important; position: static !important; height: auto !important; }
+    .mc-back { display: none !important; }
+    .mc-front {
+      position: static !important;
+      backface-visibility: visible !important;
       background: #fff !important;
       border: 1px solid #ddd !important;
       padding: 0.6rem 1rem !important;
-      min-width: 160px !important;
-      flex: 1 !important;
     }
     .member-name { color: #1a1a1a !important; font-size: 9pt !important; }
     .member-ra   { color: #8B6914 !important; font-size: 8pt !important; }
+    .member-course { color: #555 !important; font-size: 7.5pt !important; }
+    .mc-hint { display: none !important; }
 
     /* ── Sections gerais ── */
     section {
@@ -857,26 +977,107 @@
   <div class="team-inner">
     <div class="section-label reveal">Grupo de Trabalho</div>
     <div class="team-grid">
+
       <div class="member-card reveal reveal-delay-1">
-        <div class="member-name">Bruno Vallim Enumo</div>
-        <div class="member-ra">RA 60006167</div>
+        <div class="mc-inner">
+          <div class="mc-front">
+            <div>
+              <div class="member-name">Bruno Vallim Enumo</div>
+              <div class="member-ra">RA 60006167</div>
+            </div>
+            <div>
+              <div class="member-course">Administração</div>
+              <div class="mc-hint">Passe o mouse ↩</div>
+            </div>
+          </div>
+          <div class="mc-back">
+            <div class="mc-photo"><img src="img/B.jpg" alt="Foto de Bruno Vallim Enumo"></div>
+            <div class="mc-back-name">Bruno Vallim Enumo</div>
+            <div class="mc-back-course">Administração</div>
+          </div>
+        </div>
       </div>
+
       <div class="member-card reveal reveal-delay-2">
-        <div class="member-name">Eduardo Henrique Zuffo</div>
-        <div class="member-ra">RA 60009637</div>
+        <div class="mc-inner">
+          <div class="mc-front">
+            <div>
+              <div class="member-name">Eduardo Henrique Zuffo</div>
+              <div class="member-ra">RA 60009637</div>
+            </div>
+            <div>
+              <div class="member-course">Administração</div>
+              <div class="mc-hint">Passe o mouse ↩</div>
+            </div>
+          </div>
+          <div class="mc-back">
+            <div class="mc-photo"><img src="img/B.jpg" alt="Foto de Eduardo Henrique Zuffo"></div>
+            <div class="mc-back-name">Eduardo Henrique Zuffo</div>
+            <div class="mc-back-course">Administração</div>
+          </div>
+        </div>
       </div>
+
       <div class="member-card reveal reveal-delay-3">
-        <div class="member-name">Márcio Eller</div>
-        <div class="member-ra">RA 60007883</div>
+        <div class="mc-inner">
+          <div class="mc-front">
+            <div>
+              <div class="member-name">Márcio Eller</div>
+              <div class="member-ra">RA 60007883</div>
+            </div>
+            <div>
+              <div class="member-course">Administração</div>
+              <div class="mc-hint">Passe o mouse ↩</div>
+            </div>
+          </div>
+          <div class="mc-back">
+            <div class="mc-photo"><img src="img/B.jpg" alt="Foto de Márcio Eller"></div>
+            <div class="mc-back-name">Márcio Eller</div>
+            <div class="mc-back-course">Administração</div>
+          </div>
+        </div>
       </div>
+
       <div class="member-card reveal reveal-delay-4">
-        <div class="member-name">Miguel de Lima Balani</div>
-        <div class="member-ra">RA 60006229</div>
+        <div class="mc-inner">
+          <div class="mc-front">
+            <div>
+              <div class="member-name">Miguel de Lima Balani</div>
+              <div class="member-ra">RA 60006229</div>
+            </div>
+            <div>
+              <div class="member-course">Administração</div>
+              <div class="mc-hint">Passe o mouse ↩</div>
+            </div>
+          </div>
+          <div class="mc-back">
+            <div class="mc-photo"><img src="img/B.jpg" alt="Foto de Miguel de Lima Balani"></div>
+            <div class="mc-back-name">Miguel de Lima Balani</div>
+            <div class="mc-back-course">Administração</div>
+          </div>
+        </div>
       </div>
+
       <div class="member-card reveal reveal-delay-4">
-        <div class="member-name">Renan Tuci Afonso</div>
-        <div class="member-ra">RA 60005425</div>
+        <div class="mc-inner">
+          <div class="mc-front">
+            <div>
+              <div class="member-name">Renan Tuci Afonso</div>
+              <div class="member-ra">RA 60005425</div>
+            </div>
+            <div>
+              <div class="member-course">Ciências Contábeis</div>
+              <div class="mc-hint">Passe o mouse ↩</div>
+            </div>
+          </div>
+          <div class="mc-back">
+            <div class="mc-photo"><img src="img/B.jpg" alt="Foto de Renan Tuci Afonso"></div>
+            <div class="mc-back-name">Renan Tuci Afonso</div>
+            <div class="mc-back-course">Ciências Contábeis</div>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 </div>
@@ -889,9 +1090,12 @@
       <div class="section-label">01 · Introdução</div>
       <h2 class="section-title">Uma nova era para a manutenção de frotas</h2>
       <div class="section-body">
-        <p>A Mobile Fleet – Lubrificação Express propõe uma solução inovadora para o setor automotivo: realizar a manutenção preventiva de veículos diretamente no local do cliente, eliminando a necessidade de deslocamento da frota até uma oficina convencional.</p>
-        <p>Desenvolvida a partir da ferramenta Business Model Canvas (Osterwalder & Pigneur, 2011), a análise estrutura o funcionamento da empresa em nove blocos estratégicos, demonstrando como o negócio cria, entrega e captura valor no mercado.</p>
-        <p>O modelo se alinha a uma tendência global de serviços on-demand para frotas — já consolidada em outros países e em fase de crescimento expressivo no Brasil, impulsionada pela crescente terceirização de serviços não essenciais entre empresas de médio e grande porte.</p>
+        <h3 style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--white); margin-bottom:0.7rem;">Estrutura do Modelo de Negócio: Mobile Fleet</h3>
+        <p>O mercado automotivo brasileiro vive um momento de transformação, impulsionado pela crescente terceirização de serviços e pela busca permanente por eficiência operacional, especialmente no segmento de frotas corporativas. Nesse cenário, a <strong style="color:var(--gold)">modelagem de negócios</strong> se apresenta como uma ferramenta estratégica essencial, que permite compreender, de forma clara e sistêmica, como uma empresa gera valor para seus clientes e garante sustentabilidade econômica.</p>
+        <p>Dentro deste contexto, a <strong style="color:var(--gold)">Mobile Fleet – Lubrificação Express</strong> propõe uma solução inovadora para o setor: realizar a manutenção preventiva de veículos diretamente no local do cliente, eliminando a necessidade de deslocamento da frota até uma oficina convencional.</p>
+        <h3 style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--white); margin-top:1.2rem; margin-bottom:0.7rem;">Metodologia e Alinhamento de Mercado</h3>
+        <p>A análise do empreendimento foi desenvolvida a partir da ferramenta <strong style="color:var(--gold)">Business Model Canvas</strong> (Osterwalder &amp; Pigneur, 2011). Essa estrutura organiza o funcionamento da empresa em nove blocos estratégicos, demonstrando precisamente como o negócio cria, entrega e captura valor no mercado.</p>
+        <p>Este modelo se alinha a uma tendência global de serviços on-demand para frotas — já consolidada no exterior e em fase de crescimento expressivo no Brasil. A proposta ganha força especialmente entre empresas de médio e grande porte, que buscam otimizar processos e focar em seu core business através da terceirização de serviços não essenciais.</p>
       </div>
     </div>
     <div class="reveal reveal-delay-2">
@@ -1103,22 +1307,38 @@
     <div class="strategy-card reveal reveal-delay-1">
       <div class="s-num">01</div>
       <h3>Valor Entregue ao Cliente</h3>
-      <p>A Mobile Fleet gera valor ao eliminar custos indiretos de deslocamento e reduzir o tempo de inatividade da frota. Para o B2B, veículos parados representam prejuízo operacional direto — a proposta tem impacto financeiro imediato e mensurável. A plataforma digital cria fidelização e viabiliza contratos recorrentes de longo prazo.</p>
+      <p>A <strong style="color:var(--gold)">Mobile Fleet</strong> resolve uma dor latente do segmento B2B: o prejuízo operacional causado pelo deslocamento e pela inatividade de veículos. Ao realizar a manutenção in loco, a empresa converte o tempo de oficina em tempo de rodagem, gerando impacto financeiro positivo imediato para o cliente. Além disso, a entrega de valor é potencializada por uma <strong style="color:var(--gold)">plataforma de gestão digital</strong>, que automatiza alertas de manutenção e organiza o histórico da frota. Esse ecossistema tecnológico não apenas eleva a percepção de profissionalismo, mas atua como uma ferramenta de fidelização que sustenta contratos de longo prazo.</p>
     </div>
     <div class="strategy-card reveal reveal-delay-2">
       <div class="s-num">02</div>
       <h3>Geração de Receita</h3>
-      <p>O modelo opera com múltiplas fontes: serviços avulsos (troca completa + complementares) e o Plano Frota — contrato mensal por veículo, a fonte mais estratégica pela recorrência e previsibilidade de caixa que gera para a operação.</p>
+      <p>O modelo financeiro é diversificado para garantir tanto a captação de clientes pontuais quanto a estabilidade do negócio:</p>
+      <ul class="strategy-list">
+        <li><strong style="color:var(--gold)">Serviços Avulsos:</strong> Focados na margem imediata, englobam o pacote completo de troca (óleo, filtros e fluidos) somado à taxa de deslocamento.</li>
+        <li><strong style="color:var(--gold)">Plano Frota (Recorrência):</strong> Considerado o pilar estratégico do negócio, consiste em contratos mensais com valores fixos por veículo. Este formato garante previsibilidade de caixa, facilita o planejamento operacional e fortalece o fluxo de trabalho contínuo.</li>
+      </ul>
     </div>
     <div class="strategy-card reveal reveal-delay-3">
       <div class="s-num">03</div>
       <h3>Recursos Críticos</h3>
-      <p>Van adaptada com equipamentos específicos, estoque diversificado de lubrificantes e filtros, sistema digital de gestão e equipe técnica especializada. O vendedor B2B dedicado à prospecção de contratos corporativos é igualmente essencial para escalar o modelo.</p>
+      <p>Para garantir a excelência do serviço on-demand, a operação depende de quatro pilares essenciais:</p>
+      <ul class="strategy-list">
+        <li><strong style="color:var(--gold)">Unidade Móvel:</strong> Van customizada com tecnologia de ponta (bombas de sucção e sistemas de descarte ecológico).</li>
+        <li><strong style="color:var(--gold)">Logística de Suprimentos:</strong> Estoque estratégico de lubrificantes e filtros para atender a diversidade de veículos leves e pesados.</li>
+        <li><strong style="color:var(--gold)">Capital Humano:</strong> Equipe técnica altamente especializada e uma força de vendas B2B focada em negociações corporativas complexas.</li>
+        <li><strong style="color:var(--gold)">Sistema de Gestão:</strong> Software proprietário para controle de manutenção e interface com o cliente.</li>
+      </ul>
     </div>
     <div class="strategy-card reveal reveal-delay-4">
       <div class="s-num">04</div>
       <h3>Desafios e Riscos</h3>
-      <p>Logística de deslocamento (otimização de rotas é crítica para as margens), gestão do estoque de filtros (ampla variedade pode gerar capital parado), precificação do serviço delivery e validação efetiva da demanda B2B antes de escalar a operação.</p>
+      <p>A viabilidade do modelo exige atenção rigorosa a fatores críticos de risco:</p>
+      <ul class="strategy-list">
+        <li><strong style="color:var(--gold)">Otimização Logística:</strong> O planejamento de rotas é vital; falhas na roteirização podem diluir a margem de lucro com custos de combustível e tempo de deslocamento.</li>
+        <li><strong style="color:var(--gold)">Gestão de Estoque:</strong> O desafio de manter uma ampla gama de filtros sem imobilizar capital excessivo requer uma cadeia de suprimentos ágil (just-in-time).</li>
+        <li><strong style="color:var(--gold)">Posicionamento de Preço:</strong> A precificação deve ser clara para o cliente, justificando o ticket superior do serviço delivery através da economia gerada com a frota ativa.</li>
+        <li><strong style="color:var(--gold)">Escalabilidade:</strong> O sucesso depende da validação rigorosa do projeto-piloto antes da expansão via franquias, garantindo que o modelo seja replicável com baixo investimento direto.</li>
+      </ul>
     </div>
   </div>
 </section>
@@ -1132,7 +1352,18 @@
     <h2 class="section-title">Licenciamento Ambiental</h2>
   </div>
   <div class="section-body reveal reveal-delay-1">
-    <p>Por manusear resíduos de óleos lubrificantes usados (resíduos perigosos), a Mobile Fleet está sujeita à Resolução CONAMA n.º 362/2005, à Lei n.º 12.305/2010 (PNRS) e à Resolução CEMA n.º 107/2020 do Paraná. A conformidade ambiental é também um diferencial competitivo, pois empresas de frota exigem cada vez mais de seus fornecedores a comprovação de práticas sustentáveis.</p>
+    <p>Pela natureza de sua atividade — o manuseio de óleos lubrificantes usados e filtros (classificados como resíduos perigosos) — a Mobile Fleet opera sob um rigoroso framework regulatório. A conformidade com a Resolução CONAMA nº 362/2005, a Política Nacional de Resíduos Sólidos (Lei nº 12.305/2010) e a Resolução CEMA nº 107/2020 (Paraná) não é apenas uma exigência legal, mas um diferencial competitivo crítico, já que grandes frotistas exigem fornecedores com práticas sustentáveis comprovadas.</p>
+
+    <h3 style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--white); margin-top:1.4rem; margin-bottom:0.7rem;">Gestão de Resíduos e Responsabilidade</h3>
+    <p>A operação foi estruturada para garantir a rastreabilidade total e o descarte ecologicamente correto, focando em três pilares:</p>
+    <ul class="strategy-list" style="margin-top:0.6rem;">
+      <li><strong style="color:var(--gold)">Destinação Final:</strong> Encaminhamento obrigatório de resíduos para rerrefino e recicladores credenciados.</li>
+      <li><strong style="color:var(--gold)">Controle Documental:</strong> Manutenção rigorosa de manifestos de transporte e registros que asseguram a conformidade perante os órgãos fiscalizadores.</li>
+      <li><strong style="color:var(--gold)">Responsabilidade Compartilhada:</strong> Gestão ativa junto a parceiros logísticos para mitigar riscos ambientais durante o transporte e armazenamento.</li>
+    </ul>
+
+    <h3 style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--white); margin-top:1.4rem; margin-bottom:0.7rem;">O Processo de Licenciamento Ambiental</h3>
+    <p>Devido ao potencial poluidor da operação e à escala do projeto, a Mobile Fleet adota o licenciamento ambiental trifásico, conforme preconiza a Resolução CEMA nº 107/2020. Este processo garante que a empresa nasça com segurança jurídica e viabilidade técnica:</p>
   </div>
   <div class="env-phases">
     <div class="phase-card reveal reveal-delay-1">
@@ -1163,9 +1394,20 @@
     <h2 class="section-title">Conclusão</h2>
   </div>
   <div class="conclusion-wrap reveal reveal-delay-1" id="stat-80">
-    <p>A análise do modelo de negócio da Mobile Fleet – Lubrificação Express demonstra que a proposta possui forte alinhamento com as tendências do setor automotivo brasileiro, caracterizado pelo crescimento da terceirização de serviços, pela busca por eficiência operacional e pela crescente valorização da conveniência.</p>
-    <p>A estrutura do Business Model Canvas revela um modelo internamente coerente: a proposta de valor é clara e diretamente endereçada às dores dos dois segmentos identificados; os canais são adequados ao perfil de cada público; e as fontes de receita são diversificadas, com destaque para o Plano Frota, que garante recorrência e previsibilidade financeira.</p>
-    <p>Recomenda-se iniciar com foco de <strong style="color:var(--gold)">80% no segmento B2B</strong>, por ser o de maior potencial de contratos recorrentes e escalabilidade. O planejamento prévio do licenciamento ambiental trifásico é fundamental — sem a Licença de Operação, a empresa não pode iniciar suas atividades. A Mobile Fleet é uma ideia inovadora e viável, com real potencial de mercado no setor automotivo regional.</p>
+    <p>A análise do modelo de negócio da Mobile Fleet – Lubrificação Express confirma um forte alinhamento com as tendências do setor automotivo brasileiro, especialmente no que tange à busca por eficiência operacional e terceirização de serviços não essenciais. A estrutura do Business Model Canvas revela um modelo coerente, onde a proposta de valor endereça diretamente as dores do mercado por meio de conveniência e redução de custos de inatividade.</p>
+
+    <h3>Direcionamento e Validação</h3>
+    <p>Para a viabilização plena do negócio, recomenda-se que a fase inicial priorize <strong style="color:var(--gold)">80% de foco no segmento B2B</strong>. Este público oferece maior potencial de escalabilidade e contratos recorrentes. Contudo, o sucesso da operação depende de uma validação prévia junto a transportadoras e empresas de logística locais, garantindo que a precificação — que deve absorver os custos de deslocamento — e a demanda real estejam em perfeito equilíbrio.</p>
+
+    <h3>Pilares de Implantação</h3>
+    <p>A transição do papel para a prática exige atenção rigorosa a três fatores críticos:</p>
+    <ul class="strategy-list">
+      <li><strong style="color:var(--gold)">Gestão de Estoque:</strong> Implementação de um controle ágil de filtros e lubrificantes para evitar capital imobilizado.</li>
+      <li><strong style="color:var(--gold)">Segurança Jurídica e Ambiental:</strong> O planejamento do licenciamento ambiental trifásico deve ser iniciado imediatamente. Como a Licença de Operação (LO) é condição sine qua non para o início das atividades, o levantamento documental e os estudos técnicos precisam ocorrer ainda na fase de pré-abertura.</li>
+      <li><strong style="color:var(--gold)">Eficiência Logística:</strong> A roteirização deve ser o coração da operação para preservar as margens de lucro do serviço delivery.</li>
+    </ul>
+
+    <p style="margin-top:1.2rem;">Em suma, a Mobile Fleet posiciona-se como uma solução inovadora e viável. Sua sustentabilidade econômica e competitiva está diretamente ligada à excelência operacional e à estrita conformidade com as exigências legais e ambientais vigentes, apresentando real potencial de liderança no mercado automotivo regional.</p>
   </div>
 </section>
 
@@ -1244,6 +1486,17 @@
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeMenu();
   });
+  // ── Flip cards — detecção touch e tap ──
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    document.body.classList.add('touch-device');
+    document.querySelectorAll('.mc-hint').forEach(h => h.textContent = 'Toque para ver ↩');
+  }
+  document.querySelectorAll('.member-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('tapped');
+    });
+  });
+
   // ── Botão PDF ──
   document.getElementById('pdfBtn').addEventListener('click', () => {
     // Garante que todos os elementos revelados estão visíveis antes de imprimir
