@@ -517,9 +517,12 @@
   .footer-logo { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1rem; }
   .footer-info { font-size: 0.75rem; color: var(--text-dim); text-align: right; line-height: 1.6; }
 
-  /* ─── BOTÃO PDF ─── */
-  .pdf-btn {
+  /* ─── BOTÕES FLUTUANTES (PDF + DOCX) ─── */
+  .fab-group {
     position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem;
+  }
+  .pdf-btn, .docx-btn {
     display: flex; align-items: center; gap: 0.6rem;
     padding: 0.75rem 1.4rem;
     background: var(--dark-3);
@@ -529,16 +532,19 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.78rem; font-weight: 600;
     letter-spacing: 0.1em; text-transform: uppercase;
-    cursor: pointer;
+    cursor: pointer; text-decoration: none;
     box-shadow: 0 4px 24px rgba(0,0,0,0.5);
     transition: background 0.25s, border-color 0.25s, transform 0.2s;
   }
-  .pdf-btn:hover {
+  .pdf-btn:hover, .docx-btn:hover {
     background: var(--dark-4);
     border-color: var(--gold);
     transform: translateY(-2px);
   }
-  .pdf-btn svg { flex-shrink: 0; }
+  .pdf-btn svg, .docx-btn svg { flex-shrink: 0; }
+  @media print {
+    .fab-group { display: none !important; }
+  }
 
   /* ─── SCROLL REVEAL ─── */
   /* Visible by default — JS hides then animates in */
@@ -696,7 +702,7 @@
     .hero-badge,
     .hero-meta,
     .divider,
-    .pdf-btn,
+    .fab-group,
     body::before { display: none !important; }
 
     /* ── Reset de body/html ── */
@@ -907,16 +913,27 @@
 </head>
 <body id="top">
 
-<!-- BOTÃO PDF -->
-<button class="pdf-btn" id="pdfBtn" title="Gerar PDF">
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-    <polyline points="14 2 14 8 20 8"/>
-    <line x1="12" y1="18" x2="12" y2="12"/>
-    <line x1="9" y1="15" x2="15" y2="15"/>
-  </svg>
-  Gerar PDF
-</button>
+<!-- BOTÕES FLUTUANTES -->
+<div class="fab-group">
+  <a class="docx-btn" href="assets/docs/Relatorio_Mobile_Fleet.docx" download="Relatorio_Mobile_Fleet.docx" title="Download DOCX">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="12" y1="15" x2="12" y2="21"/>
+      <polyline points="9 18 12 21 15 18"/>
+    </svg>
+    Download DOCX
+  </a>
+  <button class="pdf-btn" id="pdfBtn" title="Gerar PDF">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="12" y1="18" x2="12" y2="12"/>
+      <line x1="9" y1="15" x2="15" y2="15"/>
+    </svg>
+    Gerar PDF
+  </button>
+</div>
 
 <!-- NAV -->
 <nav>
@@ -991,7 +1008,7 @@
             </div>
           </div>
           <div class="mc-back">
-            <div class="mc-photo"><img src="img/B.jpg" alt="Foto de Bruno Vallim Enumo"></div>
+            <div class="mc-photo">B</div>
             <div class="mc-back-name">Bruno Vallim Enumo</div>
             <div class="mc-back-course">Administração</div>
           </div>
@@ -1011,7 +1028,7 @@
             </div>
           </div>
           <div class="mc-back">
-            <div class="mc-photo"><img src="img/B.jpg" alt="Foto de Eduardo Henrique Zuffo"></div>
+            <div class="mc-photo">E</div>
             <div class="mc-back-name">Eduardo Henrique Zuffo</div>
             <div class="mc-back-course">Administração</div>
           </div>
@@ -1031,7 +1048,7 @@
             </div>
           </div>
           <div class="mc-back">
-            <div class="mc-photo"><img src="img/B.jpg" alt="Foto de Márcio Eller"></div>
+            <div class="mc-photo">M</div>
             <div class="mc-back-name">Márcio Eller</div>
             <div class="mc-back-course">Administração</div>
           </div>
@@ -1051,7 +1068,7 @@
             </div>
           </div>
           <div class="mc-back">
-            <div class="mc-photo"><img src="img/B.jpg" alt="Foto de Miguel de Lima Balani"></div>
+            <div class="mc-photo">M</div>
             <div class="mc-back-name">Miguel de Lima Balani</div>
             <div class="mc-back-course">Administração</div>
           </div>
@@ -1071,7 +1088,7 @@
             </div>
           </div>
           <div class="mc-back">
-            <div class="mc-photo"><img src="img/B.jpg" alt="Foto de Renan Tuci Afonso"></div>
+            <div class="mc-photo">R</div>
             <div class="mc-back-name">Renan Tuci Afonso</div>
             <div class="mc-back-course">Ciências Contábeis</div>
           </div>
@@ -1403,7 +1420,7 @@
     <p>A transição do papel para a prática exige atenção rigorosa a três fatores críticos:</p>
     <ul class="strategy-list">
       <li><strong style="color:var(--gold)">Gestão de Estoque:</strong> Implementação de um controle ágil de filtros e lubrificantes para evitar capital imobilizado.</li>
-      <li><strong style="color:var(--gold)">Segurança Jurídica e Ambiental:</strong> O planejamento do licenciamento ambiental trifásico deve ser iniciado imediatamente. Como a Licença de Operação (LO) é condição indispensável para o início das atividades, o levantamento documental e os estudos técnicos precisam ocorrer ainda na fase de pré-abertura.</li>
+      <li><strong style="color:var(--gold)">Segurança Jurídica e Ambiental:</strong> O planejamento do licenciamento ambiental trifásico deve ser iniciado imediatamente. Como a Licença de Operação (LO) é condição sine qua non para o início das atividades, o levantamento documental e os estudos técnicos precisam ocorrer ainda na fase de pré-abertura.</li>
       <li><strong style="color:var(--gold)">Eficiência Logística:</strong> A roteirização deve ser o coração da operação para preservar as margens de lucro do serviço delivery.</li>
     </ul>
 
