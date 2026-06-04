@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Fleet – Apresentação N2 | UNIPAR 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #C8A94B; --gold-light: #E8C96B;
+  --gold-dim: rgba(200,169,75,0.12); --gold-border: rgba(200,169,75,0.22);
+  --dark: #080808; --dark2: #111; --dark3: #1a1a1a; --dark4: #222;
+  --text: #E8E0D0; --textd: #7A7470; --textm: #A89E94;
+  --green: #4CAF7D; --red: #B22222;
+}
+html, body { height:100%; background:#030303; font-family:'DM Sans',sans-serif; color:var(--text); overflow:hidden; }
+
+/* ── SHELL ── */
+#app { width:100vw; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+#wrap { transform-origin:center center; }
+#vp { width:1280px; height:720px; position:relative; overflow:hidden; box-shadow:0 0 0 1px rgba(200,169,75,0.1), 0 30px 100px rgba(0,0,0,0.95); }
+
+/* ── SLIDES: stacked, shown by .on ── */
+.sl {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  background:var(--dark);
+  opacity:0; pointer-events:none;
+  transition:opacity 0.45s ease;
+}
+.sl.on { opacity:1; pointer-events:all; }
+
+/* ── GRID BG ── */
+.gbg {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:linear-gradient(rgba(200,169,75,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(200,169,75,0.025) 1px,transparent 1px);
+  background-size:80px 80px;
+}
+.glow {
+  position:absolute; border-radius:50%; filter:blur(90px); pointer-events:none;
+}
+
+/* ── PROGRESS ── */
+#pb { position:absolute; bottom:0; left:0; height:2px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); transition:width .4s; z-index:9; }
+#ctr { position:absolute; bottom:10px; right:16px; font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--textd); z-index:9; }
+#lbl { position:absolute; bottom:10px; left:16px; font-size:0.6rem; letter-spacing:.15em; text-transform:uppercase; color:var(--textd); z-index:9; }
+
+/* ── CONTROLS ── */
+#controls { display:flex; align-items:center; gap:1rem; margin-top:1rem; }
+.cb { background:none; border:1px solid var(--gold-border); color:var(--gold); width:2.2rem; height:2.2rem; border-radius:2px; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+.cb:hover { background:var(--gold-dim); border-color:var(--gold); }
+.cb:disabled { opacity:.2; cursor:default; }
+#dots { display:flex; gap:.45rem; align-items:center; }
+.dot { width:6px; height:6px; border-radius:50%; background:var(--textd); cursor:pointer; transition:all .3s; }
+.dot.on { background:var(--gold); width:18px; border-radius:3px; }
+#tmr { font-family:'DM Mono',monospace; font-size:.7rem; color:var(--textd); min-width:4ch; text-align:center; }
+#khint { position:fixed; bottom:.5rem; right:.8rem; font-size:.55rem; color:rgba(122,116,112,.4); letter-spacing:.08em; }
+
+/* ══ SLIDE SHARED ══ */
+.stag { font-size:.56rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); padding:.22rem .7rem; border:1px solid var(--gold-border); background:rgba(200,169,75,.04); }
+.sh { padding:1.6rem 3rem .4rem; display:flex; align-items:center; justify-content:space-between; }
+.shmeta { font-size:.58rem; color:var(--textd); letter-spacing:.08em; }
+.stitle { font-family:'Playfair Display',serif; font-size:1.9rem; font-weight:700; color:#F5F0E8; padding:.35rem 3rem .8rem; line-height:1.2; }
+.stitle b { color:var(--gold); font-weight:700; }
+
+/* ══ S1 CAPA ══ */
+#s1 { background:linear-gradient(135deg,#080808,#0d0b03); justify-content:center; align-items:center; }
+#s1 .glow.a { width:700px; height:500px; background:radial-gradient(ellipse,rgba(200,169,75,.07),transparent); top:50%; left:50%; transform:translate(-50%,-50%); }
+#s1 .glow.b { width:300px; height:300px; background:radial-gradient(ellipse,rgba(178,34,34,.05),transparent); top:5%; right:8%; }
+.s1in { position:relative; z-index:2; text-align:center; display:flex; flex-direction:column; align-items:center; gap:1.1rem; padding:2rem; }
+.s1badge { border:1px solid var(--gold-border); padding:.32rem 1.2rem; font-size:.6rem; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); background:rgba(200,169,75,.04); }
+.s1title { font-family:'Playfair Display',serif; font-size:3.8rem; font-weight:900; line-height:1.05; color:#F5F0E8; }
+.s1title i { font-style:italic; background:linear-gradient(90deg,var(--gold),var(--gold-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.s1sub { font-size:.85rem; color:var(--textd); font-weight:300; letter-spacing:.05em; }
+.s1div { width:60px; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+.s1team { display:flex; gap:1.6rem; flex-wrap:wrap; justify-content:center; }
+.s1m { font-size:.68rem; color:var(--textm); letter-spacing:.06em; text-transform:uppercase; }
+.s1m b { color:var(--text); font-weight:500; }
+.s1meta { display:flex; gap:2rem; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--textd); }
+.s1meta span::before { content:'·'; margin-right:.5rem; color:var(--gold); }
+
+/* ══ S2 CANVAS ══ */
+.cg {
+  display:grid;
+  grid-template-columns:1.1fr .85fr 1.1fr .85fr 1.1fr;
+  grid-template-rows:1fr 1fr;
+  gap:7px;
+  padding:.3rem 3rem 2.6rem;
+  flex:1;
+}
+.cc {
+  background:var(--dark3); border:1px solid rgba(200,169,75,.07); border-radius:3px;
+  padding:.75rem .85rem; display:flex; flex-direction:column; gap:.35rem; position:relative; overflow:hidden;
+}
+.cc::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.cc.hl { border-color:rgba(200,169,75,.3); background:rgba(200,169,75,.035); }
+.cc.hl::before { background:linear-gradient(90deg,var(--gold),var(--gold-light)); }
+.cc.hr { border-color:rgba(178,34,34,.35); background:rgba(178,34,34,.035); }
+.cc.hr::before { background:linear-gradient(90deg,var(--red),#D44); }
+.cclbl { font-size:.55rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); font-weight:600; }
+.cclbl.r { color:#E06060; }
+.cctxt { font-size:.6rem; line-height:1.5; color:var(--textm); }
+.cctxt li { list-style:none; padding-left:.65rem; position:relative; }
+.cctxt li::before { content:'›'; position:absolute; left:0; color:var(--gold); }
+.cc.sc { grid-row:1/span 2; }
+.cc.prop { grid-column:3; grid-row:1/span 2; }
+.cc.bl { grid-column:1/span 2; }
+.cc.br { grid-column:4/span 2; }
+
+/* ══ S3 PREMISSAS ══ */
+.pgrid { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; padding:.3rem 3rem 2.4rem; flex:1; }
+.pg { background:var(--dark3); border:1px solid rgba(200,169,75,.08); border-radius:3px; padding:1rem 1.1rem; }
+.pgt { font-size:.55rem; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-bottom:.7rem; padding-bottom:.5rem; border-bottom:1px solid rgba(200,169,75,.1); }
+.pr { display:flex; justify-content:space-between; align-items:baseline; padding:.3rem 0; border-bottom:1px solid rgba(255,255,255,.03); }
+.pr:last-of-type { border-bottom:none; }
+.pk { font-size:.62rem; color:var(--textd); flex:1; }
+.pv { font-family:'DM Mono',monospace; font-size:.72rem; color:var(--text); font-weight:500; }
+.psrc { font-size:.52rem; color:var(--textd); font-style:italic; margin-top:.3rem; }
+
+/* ══ S4 INDICADORES ══ */
+.kgrid { display:grid; grid-template-columns:repeat(5,1fr); gap:9px; padding:.3rem 3rem .9rem; }
+.kc { background:var(--dark3); border:1px solid rgba(200,169,75,.08); border-radius:3px; padding:1rem .9rem; display:flex; flex-direction:column; align-items:center; text-align:center; gap:.35rem; position:relative; overflow:hidden; }
+.kc::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); }
+.klbl { font-size:.53rem; letter-spacing:.12em; text-transform:uppercase; color:var(--textd); }
+.kval { font-family:'Playfair Display',serif; font-size:1.55rem; font-weight:700; color:var(--gold); line-height:1; }
+.kunit { font-size:.56rem; color:var(--textm); }
+.knote { font-size:.52rem; color:var(--textd); line-height:1.4; }
+.stbl { margin:0 3rem; background:var(--dark3); border:1px solid rgba(200,169,75,.08); border-radius:3px; overflow:hidden; }
+.stbl table { width:100%; border-collapse:collapse; }
+.stbl th { font-size:.55rem; letter-spacing:.12em; text-transform:uppercase; color:var(--textd); padding:.55rem .9rem; border-bottom:1px solid rgba(200,169,75,.07); text-align:left; background:rgba(200,169,75,.02); }
+.stbl td { font-size:.64rem; padding:.45rem .9rem; border-bottom:1px solid rgba(255,255,255,.025); color:var(--textm); }
+.stbl tr:last-child td { border-bottom:none; }
+.stbl .nm { font-family:'DM Mono',monospace; font-size:.65rem; }
+.stbl .pos { color:var(--green); }
+.stbl .nt { font-size:.57rem; color:var(--textd); font-style:italic; }
+.stbl tr.rl td { color:var(--text); }
+.stbl tr.rl td:first-child { color:var(--gold); font-weight:600; }
+
+/* ══ S5 CENÁRIOS ══ */
+.bgrid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; padding:.3rem 3rem 2.4rem; flex:1; }
+.bx { background:var(--dark3); border:1px solid rgba(200,169,75,.08); border-radius:3px; padding:1rem 1.2rem; display:flex; flex-direction:column; }
+.bxt { font-size:.57rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:.9rem; }
+.bg { display:flex; flex-direction:column; gap:.6rem; flex:1; justify-content:center; }
+.bi { display:flex; align-items:center; gap:.7rem; }
+.bn { font-size:.6rem; color:var(--textd); min-width:100px; }
+.bt { flex:1; height:22px; background:rgba(255,255,255,.04); border-radius:2px; overflow:hidden; position:relative; }
+.bf { height:100%; display:flex; align-items:center; justify-content:flex-end; padding-right:.45rem; font-family:'DM Mono',monospace; font-size:.58rem; font-weight:600; border-radius:2px; }
+.bf.gd { background:linear-gradient(90deg,rgba(200,169,75,.5),var(--gold)); color:#000; }
+.bf.gn { background:linear-gradient(90deg,rgba(76,175,125,.5),var(--green)); color:#000; }
+.bf.dm { background:linear-gradient(90deg,rgba(122,116,112,.35),rgba(122,116,112,.6)); color:var(--textd); }
+.pvis { display:flex; flex-direction:column; gap:.6rem; }
+.pmonths { display:flex; gap:4px; flex-wrap:wrap; }
+.md { width:26px; height:26px; border-radius:2px; display:flex; align-items:center; justify-content:center; font-family:'DM Mono',monospace; font-size:.5rem; color:var(--textd); border:1px solid rgba(255,255,255,.06); }
+.md.paid { background:rgba(200,169,75,.1); border-color:var(--gold-border); color:var(--gold); }
+.md.brk { background:var(--gold); color:#000; font-weight:700; }
+.pnote { font-size:.6rem; color:var(--textd); line-height:1.55; }
+
+/* ══ S6 CONEXÃO ══ */
+.clayout { display:grid; grid-template-columns:1fr 50px 1fr; padding:.3rem 3rem 2.4rem; flex:1; align-items:center; gap:0; }
+.ccol { display:flex; flex-direction:column; gap:.75rem; }
+.card { background:var(--dark3); border:1px solid rgba(200,169,75,.1); border-radius:3px; padding:.8rem 1rem; }
+.card.risk { border-color:rgba(178,34,34,.28); background:rgba(178,34,34,.03); }
+.cardlbl { font-size:.53rem; letter-spacing:.15em; text-transform:uppercase; color:var(--gold); margin-bottom:.28rem; }
+.card.risk .cardlbl { color:#E06060; }
+.cardtxt { font-size:.63rem; color:var(--textm); line-height:1.5; }
+.cardtxt b { color:var(--text); font-weight:500; }
+.arrows { display:flex; flex-direction:column; align-items:center; justify-content:space-around; height:100%; padding:1.5rem 0; }
+.arw { width:36px; height:1px; background:var(--gold-border); position:relative; }
+.arw::after { content:'›'; position:absolute; right:-4px; top:-8px; color:var(--gold); font-size:.85rem; }
+.collbl { font-size:.55rem; letter-spacing:.16em; text-transform:uppercase; color:var(--textd); margin-bottom:.2rem; }
+
+/* ══ S7 VEREDITO ══ */
+#s7 { background:linear-gradient(135deg,#080808,#090d06); }
+#s7 .glow.a { width:600px; height:500px; background:radial-gradient(ellipse,rgba(76,175,125,.055),transparent); top:50%; left:50%; transform:translate(-50%,-50%); }
+.vlayout { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:.8rem 3rem 2.4rem; gap:1.2rem; }
+.vbadge { border:2px solid var(--green); padding:.4rem 1.8rem; font-size:.65rem; letter-spacing:.25em; text-transform:uppercase; color:var(--green); background:rgba(76,175,125,.05); }
+.vtitle { font-family:'Playfair Display',serif; font-size:2.8rem; font-weight:900; text-align:center; line-height:1.1; color:#F5F0E8; }
+.vtitle i { font-style:italic; color:var(--gold); }
+.vpillars { display:flex; gap:1.2rem; width:100%; }
+.vp { flex:1; background:var(--dark3); border:1px solid rgba(200,169,75,.08); border-radius:3px; padding:.8rem .9rem; text-align:center; }
+.vpn { font-family:'DM Mono',monospace; font-size:1.1rem; color:var(--gold); font-weight:500; }
+.vpl { font-size:.55rem; letter-spacing:.1em; text-transform:uppercase; color:var(--textd); margin-top:.15rem; }
+.vlearn { background:rgba(200,169,75,.03); border:1px solid var(--gold-border); border-radius:3px; padding:.8rem 1.4rem; text-align:center; width:100%; }
+.vlearn.gr { background:rgba(76,175,125,.03); border-color:rgba(76,175,125,.22); }
+.vlbl { font-size:.52rem; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-bottom:.3rem; }
+.vlearn.gr .vlbl { color:var(--green); }
+.vtxt { font-size:.7rem; color:var(--textm); line-height:1.5; font-style:italic; }
+.vrec { font-size:.58rem; color:var(--textd); text-align:center; letter-spacing:.08em; }
+.vrec b { color:var(--text); }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="wrap">
+    <div id="vp">
+      <div id="pb"></div>
+      <div id="ctr"></div>
+      <div id="lbl"></div>
+
+      <!-- ═══ S1 — CAPA ═══ -->
+      <div class="sl on" id="s1" data-lbl="Abertura · 0–1 min">
+        <div class="gbg"></div>
+        <div class="glow a"></div>
+        <div class="glow b"></div>
+        <div class="s1in">
+          <div class="s1badge">UNIPAR · Modelagem de Negócios · 2026</div>
+          <div>
+            <div class="s1title">Mobile <i>Fleet</i></div>
+            <div style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--textd);font-weight:400;text-align:center;margin-top:.2rem;">Lubrificação Express</div>
+          </div>
+          <div class="s1sub">Análise de Viabilidade do Modelo de Negócio — 2º Bimestre</div>
+          <div class="s1div"></div>
+          <div class="s1team">
+            <div class="s1m"><b>Bruno</b> Vallim Enumo · 60006167</div>
+            <div class="s1m"><b>Eduardo</b> H. Zuffo · 60009637</div>
+            <div class="s1m"><b>Márcio</b> Eller · 60007883</div>
+            <div class="s1m"><b>Miguel</b> de Lima Balani · 60006229</div>
+            <div class="s1m"><b>Renan</b> Tuci Afonso · 60005425</div>
+          </div>
+          <div class="s1meta">
+            <span>Administração / Ciências Contábeis</span>
+            <span>Prof. Marlon Luiz Ganancio</span>
+            <span>Umuarama – PR · 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ S2 — MODELO DE NEGÓCIO ═══ -->
+      <div class="sl" id="s2" data-lbl="Modelo de Negócio · 1–3 min">
+        <div class="gbg"></div>
+        <div class="glow a" style="width:400px;height:250px;background:radial-gradient(ellipse,rgba(200,169,75,.05),transparent);top:-50px;right:-60px;"></div>
+        <div class="sh">
+          <div class="stag">Slide 02 · Business Model Canvas</div>
+          <div class="shmeta">Mobile Fleet – Lubrificação Express</div>
+        </div>
+        <div class="stitle">O modelo de <b>negócio</b></div>
+        <div class="cg">
+          <div class="cc sc">
+            <div class="cclbl">Parcerias-Chave</div>
+            <ul class="cctxt">
+              <li>Shell, Mobil, Castrol, Petrobras, Ipiranga</li>
+              <li>MANN-FILTER, Mahle, Fram</li>
+              <li>Distribuidores automotivos regionais</li>
+              <li>Empresas certificadas para coleta de óleo usado</li>
+            </ul>
+          </div>
+          <div class="cc">
+            <div class="cclbl">Atividades-Chave</div>
+            <ul class="cctxt">
+              <li>Troca de óleo no local do cliente</li>
+              <li>Logística e roteirização</li>
+              <li>Gestão de estoque de insumos</li>
+              <li>Prospecção e captação B2B</li>
+              <li>Gestão da plataforma digital</li>
+            </ul>
+          </div>
+          <div class="cc prop hl">
+            <div class="cclbl">Proposta de Valor</div>
+            <ul class="cctxt">
+              <li>Troca de óleo <em>delivery</em> — atendimento no local</li>
+              <li>Redução do tempo de inatividade da frota</li>
+              <li>Leves, utilitários e caminhões</li>
+              <li>Produtos homologados por montadoras</li>
+              <li>Histórico digital por veículo</li>
+              <li>Plano mensal ou por quilometragem</li>
+            </ul>
+          </div>
+          <div class="cc">
+            <div class="cclbl">Relacionamento</div>
+            <ul class="cctxt">
+              <li>B2B: contratos + gerente de conta</li>
+              <li>B2B: relatórios periódicos de frota</li>
+              <li>B2C: agendamento self-service</li>
+              <li>Notificações automáticas de próxima troca</li>
+            </ul>
+          </div>
+          <div class="cc sc">
+            <div class="cclbl">Segmentos</div>
+            <ul class="cctxt">
+              <li><b style="color:var(--text)">B2B (principal):</b> transportadoras, logística, construtoras, locadoras, empresas de ônibus</li>
+              <li><b style="color:var(--text)">B2C:</b> motoristas de app (Uber, 99), proprietários de veículos premium</li>
+            </ul>
+          </div>
+          <div class="cc" style="grid-column:2;">
+            <div class="cclbl">Recursos-Chave</div>
+            <ul class="cctxt">
+              <li>Van adaptada (mini-oficina móvel)</li>
+              <li>Equipamentos de sucção e tanques</li>
+              <li>Sistema de gestão TI</li>
+              <li>Técnicos especializados + vendedor B2B</li>
+            </ul>
+          </div>
+          <div class="cc" style="grid-column:4;">
+            <div class="cclbl">Canais</div>
+            <ul class="cctxt">
+              <li>WhatsApp Business</li>
+              <li>Site com agendamento online</li>
+              <li>Vendedor B2B com visita ativa</li>
+              <li>Google Meu Negócio / Instagram</li>
+            </ul>
+          </div>
+          <div class="cc bl hr">
+            <div class="cclbl r">Estrutura de Custos ← maior risco</div>
+            <ul class="cctxt">
+              <li><b style="color:var(--text)">Fixos</b> (van, salários, pró-labore R$3.500, seguro, sistema): <b style="color:#E06060">R$ 5.900/mês</b></li>
+              <li><b style="color:var(--text)">Variáveis</b> (lubrificantes, filtros, descarte): <b>R$ 290,57/cliente</b></li>
+            </ul>
+          </div>
+          <div class="cc br hl">
+            <div class="cclbl">Fontes de Receita ← sustenta o PE</div>
+            <ul class="cctxt">
+              <li>Troca avulsa: óleo + filtro + mão de obra + deslocamento</li>
+              <li><b style="color:var(--text)">Plano Frota</b>: contrato mensal por veículo (recorrente)</li>
+              <li>Ticket médio: <b style="color:var(--gold)">R$ 455</b> por cliente</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ S3 — PREMISSAS ═══ -->
+      <div class="sl" id="s3" data-lbl="Premissas Adotadas · 1–3 min">
+        <div class="gbg"></div>
+        <div class="sh">
+          <div class="stag">Slide 03 · Premissas</div>
+          <div class="shmeta">Mobile Fleet – Lubrificação Express</div>
+        </div>
+        <div class="stitle">Premissas <b>adotadas</b></div>
+        <div class="pgrid">
+          <div class="pg">
+            <div class="pgt">Receita &amp; Clientes</div>
+            <div class="pr"><div class="pk">Ticket médio por cliente/mês</div><div class="pv" style="color:var(--gold)">R$ 455</div></div>
+            <div class="pr"><div class="pk">Canal principal de vendas</div><div class="pv">WhatsApp</div></div>
+            <div class="pr"><div class="pk">Alcance estimado/mês</div><div class="pv">800 pessoas</div></div>
+            <div class="pr"><div class="pk">Taxa de conversão</div><div class="pv">5%</div></div>
+            <div class="pr"><div class="pk">Clientes no Mês 1</div><div class="pv" style="color:var(--gold)">80 clientes</div></div>
+            <div class="pr"><div class="pk">Meta Mês 12</div><div class="pv" style="color:var(--gold)">320 clientes</div></div>
+            <div class="psrc">Fonte: pesquisa de mercado com empresas especializadas no ramo</div>
+          </div>
+          <div class="pg">
+            <div class="pgt">Estrutura de Custos</div>
+            <div class="pr"><div class="pk">Tráfego pago (anúncios/mês)</div><div class="pv">R$ 200</div></div>
+            <div class="pr"><div class="pk">Ferramenta CRM / comunicação</div><div class="pv">R$ 200</div></div>
+            <div class="pr"><div class="pk">Pró-labore do responsável</div><div class="pv">R$ 3.500</div></div>
+            <div class="pr"><div class="pk">Outros custos fixos</div><div class="pv">R$ 2.000</div></div>
+            <div class="pr" style="border-top:1px solid rgba(200,169,75,.15);margin-top:.3rem;padding-top:.45rem;">
+              <div class="pk" style="color:var(--text)"><b>Total custo fixo/mês</b></div><div class="pv" style="color:#E06060"><b>R$ 5.900</b></div>
+            </div>
+            <div class="pr"><div class="pk">Custo variável por cliente</div><div class="pv">R$ 290,57</div></div>
+            <div class="psrc">insumos R$290 + taxa de pagamento R$0,57 (Mercado Pago)</div>
+          </div>
+          <div class="pg">
+            <div class="pgt">Investimento Inicial</div>
+            <div class="pr"><div class="pk">Equipamentos e estoque inicial</div><div class="pv">R$ 50.000</div></div>
+            <div class="pr"><div class="pk">Identidade visual e divulgação</div><div class="pv">R$ 200</div></div>
+            <div class="pr"><div class="pk">Capital de giro (≈2× custos fixos)</div><div class="pv">R$ 11.400</div></div>
+            <div class="pr"><div class="pk">Outros (CNPJ, treinamento)</div><div class="pv">R$ 1.500</div></div>
+            <div class="pr" style="border-top:1px solid rgba(200,169,75,.15);margin-top:.3rem;padding-top:.45rem;">
+              <div class="pk" style="color:var(--text)"><b>Investimento total</b></div><div class="pv" style="color:var(--gold)"><b>R$ 63.100</b></div>
+            </div>
+          </div>
+          <div class="pg">
+            <div class="pgt">Crescimento de Clientes</div>
+            <div class="pr"><div class="pk">Mês 1 — contato direto e visitas</div><div class="pv">80</div></div>
+            <div class="pr"><div class="pk">Mês 3 — cadeia de recomendações</div><div class="pv">100</div></div>
+            <div class="pr"><div class="pk">Mês 6 — prospecção + indicações</div><div class="pv">150</div></div>
+            <div class="pr"><div class="pk">Mês 12 — meta anual</div><div class="pv" style="color:var(--gold)">320</div></div>
+            <div class="psrc">crescimento ~20%/mês — compatível com negócio local em expansão com foco B2B</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ S4 — INDICADORES ═══ -->
+      <div class="sl" id="s4" data-lbl="Indicadores Financeiros · 3–6 min">
+        <div class="gbg"></div>
+        <div class="sh">
+          <div class="stag">Slide 04 · Indicadores Financeiros</div>
+          <div class="shmeta">Mobile Fleet – Lubrificação Express</div>
+        </div>
+        <div class="stitle">Indicadores <b>financeiros</b></div>
+        <div class="kgrid">
+          <div class="kc">
+            <div class="klbl">Margem de Contribuição</div>
+            <div class="kval">36,1%</div>
+            <div class="kunit">MC%</div>
+            <div class="knote">Acima do limiar saudável de 30% ✓</div>
+          </div>
+          <div class="kc">
+            <div class="klbl">Ponto de Equilíbrio</div>
+            <div class="kval">36</div>
+            <div class="kunit">clientes/mês mínimo</div>
+            <div class="knote">Atingido no Mês 1 com 80 clientes ✓</div>
+          </div>
+          <div class="kc">
+            <div class="klbl">Resultado Mês 12</div>
+            <div class="kval" style="font-size:1.2rem">R$46,7k</div>
+            <div class="kunit">lucro no mês da meta</div>
+            <div class="knote">Cenário realista 320 clientes ✓</div>
+          </div>
+          <div class="kc">
+            <div class="klbl">Payback</div>
+            <div class="kval">Mês 1</div>
+            <div class="kunit">primeiro mês positivo</div>
+            <div class="knote">Operação lucrativa na abertura ✓</div>
+          </div>
+          <div class="kc">
+            <div class="klbl">CAC</div>
+            <div class="kval">R$2,50</div>
+            <div class="kunit">custo por cliente</div>
+            <div class="knote">MC unitária R$164,43 por cliente ✓</div>
+          </div>
+        </div>
+        <div class="stbl" style="margin-bottom:.5rem;">
+          <table>
+            <tr>
+              <th>Cenário</th><th>Clientes Mês 12</th><th>Receita</th><th>MC Total</th><th>Resultado</th><th>Interpretação</th>
+            </tr>
+            <tr>
+              <td>Pessimista (−30%)</td>
+              <td class="nm">224</td><td class="nm">R$ 101.920</td><td class="nm">R$ 65.088</td>
+              <td class="nm pos">R$ 59.188</td>
+              <td class="nt">Lucrativo mesmo perdendo 1/3 dos clientes</td>
+            </tr>
+            <tr class="rl">
+              <td>◉ Realista (base)</td>
+              <td class="nm">320</td><td class="nm">R$ 145.600</td><td class="nm">R$ 92.982</td>
+              <td class="nm pos">R$ 46.718</td>
+              <td class="nt">Meta do grupo — sustentada pelos dados</td>
+            </tr>
+            <tr>
+              <td>Otimista (+30%)</td>
+              <td class="nm">416</td><td class="nm">R$ 189.280</td><td class="nm">R$ 120.877</td>
+              <td class="nm pos">R$ 114.977</td>
+              <td class="nt">Com escalonamento e 2ª van na rota</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ S5 — CENÁRIOS VISUAIS ═══ -->
+      <div class="sl" id="s5" data-lbl="Análise de Cenários · 3–6 min">
+        <div class="gbg"></div>
+        <div class="sh">
+          <div class="stag">Slide 05 · Análise de Cenários</div>
+          <div class="shmeta">Mobile Fleet – Lubrificação Express</div>
+        </div>
+        <div class="stitle">Análise de <b>cenários</b></div>
+        <div class="bgrid">
+          <div class="bx">
+            <div class="bxt">Resultado Mensal — Evolução (R$)</div>
+            <div class="bg">
+              <div class="bi"><div class="bn">Mês 1</div><div class="bt"><div class="bf gd" style="width:14%">7,2k</div></div></div>
+              <div class="bi"><div class="bn">Mês 3</div><div class="bt"><div class="bf gd" style="width:19%">10,5k</div></div></div>
+              <div class="bi"><div class="bn">Mês 6</div><div class="bt"><div class="bf gd" style="width:37%">18,8k</div></div></div>
+              <div class="bi"><div class="bn">Mês 12 Pessimista</div><div class="bt"><div class="bf dm" style="width:52%">59,2k</div></div></div>
+              <div class="bi"><div class="bn">Mês 12 Realista</div><div class="bt"><div class="bf gd" style="width:41%">46,7k</div></div></div>
+              <div class="bi"><div class="bn">Mês 12 Otimista</div><div class="bt"><div class="bf gn" style="width:100%">115,0k</div></div></div>
+            </div>
+          </div>
+          <div class="bx">
+            <div class="bxt">Clientes por Cenário — Mês 12</div>
+            <div class="bg" style="margin-bottom:1.2rem;">
+              <div class="bi"><div class="bn">Pessimista (−30%)</div><div class="bt"><div class="bf dm" style="width:54%">224</div></div></div>
+              <div class="bi"><div class="bn">Realista (base)</div><div class="bt"><div class="bf gd" style="width:77%">320</div></div></div>
+              <div class="bi"><div class="bn">Otimista (+30%)</div><div class="bt"><div class="bf gn" style="width:100%">416</div></div></div>
+            </div>
+            <div class="bxt" style="margin-top:.5rem;">Recuperação do Investimento — Payback</div>
+            <div class="pvis">
+              <div class="pmonths">
+                <div class="md brk">M1</div>
+                <div class="md paid">M2</div><div class="md paid">M3</div><div class="md paid">M4</div>
+                <div class="md paid">M5</div><div class="md paid">M6</div><div class="md paid">M7</div>
+                <div class="md paid">M8</div><div class="md paid">M9</div><div class="md paid">M10</div>
+                <div class="md paid">M11</div><div class="md paid">M12</div>
+              </div>
+              <div class="pnote">
+                <b style="color:var(--gold)">Mês 1</b> — operação já positiva desde o início.<br>
+                Acumulado 12 meses: <b style="color:var(--green)">R$ 222.090</b> · Investimento inicial: R$ 63.100.<br>
+                <i>Score do modelo: 4/5 — Muito bom: viável com pequenos ajustes nos custos fixos.</i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ S6 — CANVAS + VIABILIDADE ═══ -->
+      <div class="sl" id="s6" data-lbl="Canvas & Números · 6–8 min">
+        <div class="gbg"></div>
+        <div class="sh">
+          <div class="stag">Slide 06 · Canvas e Viabilidade</div>
+          <div class="shmeta">Mobile Fleet – Lubrificação Express</div>
+        </div>
+        <div class="stitle">Canvas e <b>números</b>: onde um explica o outro</div>
+        <div class="clayout">
+          <div class="ccol">
+            <div class="collbl">Blocos do Canvas</div>
+            <div class="card">
+              <div class="cardlbl">Recursos-Chave</div>
+              <div class="cardtxt">Van adaptada + equipamentos + técnicos. <b>Maior custo fixo</b> do modelo: financiamento + salários + pró-labore.</div>
+            </div>
+            <div class="card">
+              <div class="cardlbl">Fontes de Receita</div>
+              <div class="cardtxt"><b>Plano Frota</b> (contrato mensal) é a receita mais estratégica pela recorrência. Com 36 clientes o modelo já se paga (PE = R$ 16.380/mês).</div>
+            </div>
+            <div class="card">
+              <div class="cardlbl">Canais</div>
+              <div class="cardtxt">WhatsApp + vendedor B2B ativo. CAC de <b>R$2,50</b> é altamente eficiente — para cada R$1 investido, retorno de R$164,43 de MC unitária.</div>
+            </div>
+            <div class="card risk">
+              <div class="cardlbl">Risco Estratégico</div>
+              <div class="cardtxt">Logística de deslocamento pode comprometer margens sem otimização de rotas. Dependência de fornecedores (Shell, Mobil) pode elevar custos variáveis.</div>
+            </div>
+          </div>
+          <div class="arrows">
+            <div class="arw"></div>
+            <div class="arw"></div>
+            <div class="arw"></div>
+            <div class="arw"></div>
+          </div>
+          <div class="ccol">
+            <div class="collbl">Impacto Financeiro</div>
+            <div class="card">
+              <div class="cardlbl">Custo fixo — R$ 5.900/mês</div>
+              <div class="cardtxt">Bloco <b>Recursos-Chave</b> origina o maior custo fixo. Risco já identificado no 1º bimestre. Cobertura exige apenas 36 clientes — atingido já no Mês 1.</div>
+            </div>
+            <div class="card">
+              <div class="cardlbl">PE = 36 clientes · Mês 12 = R$ 46.718 lucro</div>
+              <div class="cardtxt">A <b>Fonte de Receita</b> principal (Plano Frota) sustenta o PE com folga: Mês 1 já tem 80 clientes — mais que o dobro do mínimo necessário.</div>
+            </div>
+            <div class="card">
+              <div class="cardlbl">CAC R$2,50 · MC unitária R$164,43</div>
+              <div class="cardtxt">Os <b>Canais</b> escolhidos são altamente eficientes. Um canal ainda mais barato (indicação/boca a boca) melhoraria o resultado sem custo adicional.</div>
+            </div>
+            <div class="card risk">
+              <div class="cardlbl">Se custo variável +20% → R$348,68/cliente</div>
+              <div class="cardtxt">Margem cai de 36,1% para ~23,4%. PE sobe para ~56 clientes/mês. Ajuste no ticket médio ou troca de fornecedor mitiga esse risco.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ S7 — VEREDITO ═══ -->
+      <div class="sl" id="s7" data-lbl="Veredito & Aprendizado · 8–10 min">
+        <div class="gbg"></div>
+        <div class="glow a"></div>
+        <div class="sh">
+          <div class="stag">Slide 07 · Veredito Final</div>
+          <div class="shmeta">Mobile Fleet – Lubrificação Express</div>
+        </div>
+        <div class="vlayout">
+          <div class="vbadge">Diagnóstico do Grupo</div>
+          <div class="vtitle">Viável <i>Operacional</i><br><span style="font-family:'DM Sans',sans-serif;font-size:1.4rem;font-weight:300;font-style:normal;color:var(--textd);">com ajuste nos custos fixos</span></div>
+          <div class="vpillars">
+            <div class="vp"><div class="vpn">36,1%</div><div class="vpl">Margem de Contribuição ✓</div></div>
+            <div class="vp"><div class="vpn">36 clientes</div><div class="vpl">Ponto de Equilíbrio — atingido no Mês 1 ✓</div></div>
+            <div class="vp"><div class="vpn">R$ 46.718</div><div class="vpl">Lucro no Mês 12 · Cenário Realista ✓</div></div>
+            <div class="vp"><div class="vpn">4 / 5</div><div class="vpl">Score do Modelo — Muito Bom ✓</div></div>
+          </div>
+          <div class="vlearn">
+            <div class="vlbl">Ajuste Principal Recomendado</div>
+            <div class="vtxt">Reduzir ou diluir os custos fixos de R$5.900/mês — representam o maior risco operacional. Com a franquia de uma segunda van, os fixos se diluem e a escala melhora o resultado por unidade.</div>
+          </div>
+          <div class="vlearn gr">
+            <div class="vlbl">Principal Aprendizado do Grupo</div>
+            <div class="vtxt">"O maior aprendizado foi perceber que um modelo inovador precisa ser validado pelos números antes de escalar — a Mobile Fleet tem potencial real, mas o controle rígido dos custos fixos e a otimização de rotas são condições inegociáveis para a sustentabilidade financeira."</div>
+          </div>
+          <div class="vrec">O grupo <b>recomenda seguir com o negócio</b> · Foco inicial: 80% B2B · Validação com transportadoras da região antes da abertura formal</div>
+        </div>
+      </div>
+
+    </div><!-- /vp -->
+  </div><!-- /wrap -->
+
+  <div id="controls">
+    <button class="cb" id="bprev" onclick="go(cur-1)" title="Anterior ←">‹</button>
+    <div id="dots"></div>
+    <button class="cb" id="bnext" onclick="go(cur+1)" title="Próximo →">›</button>
+    <div id="tmr">00:00</div>
+    <button class="cb" onclick="toggleFS()" title="Tela cheia F">⤢</button>
+  </div>
+</div>
+<div id="khint">← → Navegar &nbsp;·&nbsp; F Tela cheia &nbsp;·&nbsp; T Zerar cronômetro</div>
+
+<script>
+const slides = document.querySelectorAll('.sl');
+const N = slides.length;
+let cur = 0;
+
+// build dots
+const dotsEl = document.getElementById('dots');
+for(let i=0;i<N;i++){
+  const d=document.createElement('div');
+  d.className='dot';
+  d.onclick=()=>go(i);
+  dotsEl.appendChild(d);
+}
+
+function go(n){
+  n=Math.max(0,Math.min(N-1,n));
+  slides[cur].classList.remove('on');
+  cur=n;
+  slides[cur].classList.add('on');
+  sync();
+}
+
+function sync(){
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
+  document.getElementById('bprev').disabled=cur===0;
+  document.getElementById('bnext').disabled=cur===N-1;
+  document.getElementById('pb').style.width=((cur+1)/N*100)+'%';
+  document.getElementById('ctr').textContent=(cur+1)+' / '+N;
+  document.getElementById('lbl').textContent=slides[cur].dataset.lbl||'';
+}
+sync();
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(cur+1);}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(cur-1);}
+  if(e.key.toLowerCase()==='f') toggleFS();
+  if(e.key.toLowerCase()==='t') t0=Date.now();
+});
+
+function toggleFS(){
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+// scale
+function scale(){
+  const W=1280,H=720,cH=80;
+  const s=Math.min(window.innerWidth/W,(window.innerHeight-cH)/H);
+  document.getElementById('wrap').style.transform='scale('+s+')';
+}
+window.addEventListener('resize',scale); scale();
+
+// timer
+let t0=Date.now();
+setInterval(()=>{
+  const s=Math.floor((Date.now()-t0)/1000);
+  document.getElementById('tmr').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+},500);
+</script>
+</body>
+</html>
