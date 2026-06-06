@@ -507,6 +507,41 @@
   .refs-list li::before { content: '—'; position: absolute; left: 0; color: var(--gold); }
   .refs-list li strong { color: #A09880; }
 
+  /* ─── VÍDEO ─── */
+  .video-section {
+    padding: 5rem 4rem;
+    max-width: 1000px; margin: 0 auto;
+  }
+  .video-desc {
+    color: var(--text-dim); font-size: 0.95rem; line-height: 1.7;
+    max-width: 680px; margin-bottom: 2.5rem;
+  }
+  .video-wrapper {
+    position: relative; padding-bottom: 56.25%; /* 16:9 */
+    height: 0; overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid rgba(200,169,75,0.2);
+    box-shadow: 0 8px 48px rgba(0,0,0,0.6);
+    background: #000;
+  }
+  .video-wrapper iframe {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 8px;
+  }
+  .video-actions {
+    display: flex; gap: 1rem; margin-top: 1.8rem; flex-wrap: wrap;
+  }
+  .video-yt-btn {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    padding: 0.7rem 1.4rem;
+    background: #FF0000; color: #fff;
+    border-radius: 4px; text-decoration: none;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .video-yt-btn:hover { background: #cc0000; transform: translateY(-2px); }
+
   /* ─── FOOTER ─── */
   footer {
     background: var(--dark-2);
@@ -1033,6 +1068,7 @@
     <li><a href="#env">Ambiental</a></li>
     <li><a href="#conclusion">Conclusão</a></li>
     <li><a href="#viabilidade">Viabilidade</a></li>
+    <li><a href="#video">Vídeo</a></li>
   </ul>
   <button class="nav-hamburger" id="menuBtn" aria-label="Abrir menu" aria-expanded="false">
     <span></span><span></span><span></span>
@@ -1060,6 +1096,8 @@
   <a href="#conclusion"  class="menu-link">Conclusão</a>
   <div class="mobile-menu-divider"></div>
   <a href="#viabilidade" class="menu-link">Viabilidade</a>
+  <div class="mobile-menu-divider"></div>
+  <a href="#video"       class="menu-link">Vídeo</a>
 </div>
 
 <!-- HERO -->
@@ -1684,6 +1722,33 @@
     <li>RIES, Eric. <strong>A startup enxuta (The Lean Startup).</strong> São Paulo: Leya, 2012.</li>
     <li>SEBRAE. <strong>Modelagem de negócios: guia prático para empreendedores.</strong> Brasília: Sebrae, 2021.</li>
   </ul>
+</section>
+
+<!-- VÍDEO -->
+<section id="video" class="video-section">
+  <div class="reveal">
+    <div class="section-label">08 · Apresentação em Vídeo</div>
+  </div>
+  <h2 class="section-title reveal reveal-delay-1">Vídeo de Apresentação</h2>
+  <p class="video-desc reveal reveal-delay-2">Assista à apresentação completa do projeto Mobile Fleet – Lubrificação Express desenvolvida pelo grupo para a disciplina de Modelagem de Negócios.</p>
+
+  <div class="video-wrapper reveal reveal-delay-2">
+    <iframe
+      src="https://www.youtube.com/embed/hoKhgwOzgv8"
+      title="Mobile Fleet – Lubrificação Express | Apresentação UNIPAR 2026"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+      loading="lazy">
+    </iframe>
+  </div>
+
+  <div class="video-actions reveal reveal-delay-3">
+    <a class="video-yt-btn" href="https://youtu.be/hoKhgwOzgv8" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.8 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+      Assistir no YouTube
+    </a>
+  </div>
 </section>
 
 <!-- FOOTER -->
