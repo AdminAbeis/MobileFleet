@@ -17,9 +17,10 @@
 html, body { height:100%; background:#030303; font-family:'DM Sans',sans-serif; color:var(--text); overflow:hidden; }
 
 /* ── SHELL ── */
-#app { width:100vw; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-#wrap { transform-origin:center center; }
-#vp { width:1280px; height:720px; position:relative; overflow:hidden; box-shadow:0 0 0 1px rgba(200,169,75,0.1), 0 30px 100px rgba(0,0,0,0.95); }
+#app { width:100vw; height:100vh; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#030303; }
+/* wrap = slide (720px) + barra (44px) = 764px — tudo escala junto */
+#wrap { transform-origin:center center; display:flex; flex-direction:column; width:1280px; }
+#vp { width:1280px; height:720px; position:relative; overflow:hidden; flex-shrink:0; box-shadow:0 0 0 1px rgba(200,169,75,0.1), 0 20px 80px rgba(0,0,0,0.9); }
 
 /* ── SLIDES: stacked, shown by .on ── */
 .sl {
@@ -41,21 +42,38 @@ html, body { height:100%; background:#030303; font-family:'DM Sans',sans-serif; 
   position:absolute; border-radius:50%; filter:blur(90px); pointer-events:none;
 }
 
-/* ── PROGRESS ── */
-#pb { position:absolute; bottom:0; left:0; height:2px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); transition:width .4s; z-index:9; }
-#ctr { position:absolute; bottom:10px; right:16px; font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--textd); z-index:9; }
-#lbl { position:absolute; bottom:10px; left:16px; font-size:0.6rem; letter-spacing:.15em; text-transform:uppercase; color:var(--textd); z-index:9; }
+/* ── PROGRESS / CONTADOR ── */
+#pb  { position:absolute; bottom:0; left:0; height:2px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); transition:width .4s; z-index:9; }
+#ctr { position:absolute; bottom:8px; right:14px; font-family:'DM Mono',monospace; font-size:0.62rem; color:var(--textd); z-index:9; }
+#lbl { position:absolute; bottom:8px; left:14px; font-size:0.57rem; letter-spacing:.14em; text-transform:uppercase; color:var(--textd); z-index:9; }
 
-/* ── CONTROLS ── */
-#controls { display:flex; align-items:center; gap:1rem; margin-top:1rem; }
-.cb { background:none; border:1px solid var(--gold-border); color:var(--gold); width:2.2rem; height:2.2rem; border-radius:2px; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+/* ── BARRA DE NAVEGAÇÃO — abaixo do slide, escala junto com o wrap ── */
+#controls {
+  width:1280px; height:44px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  gap:1rem;
+  background:#0a0a0a;
+  border-top:1px solid rgba(200,169,75,0.18);
+}
+.cb {
+  background:rgba(200,169,75,0.07);
+  border:1px solid var(--gold-border);
+  color:var(--gold);
+  width:2.4rem; height:2.4rem;
+  border-radius:3px; cursor:pointer;
+  font-size:1.2rem;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .18s; flex-shrink:0;
+  touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+}
 .cb:hover { background:var(--gold-dim); border-color:var(--gold); }
-.cb:disabled { opacity:.2; cursor:default; }
-#dots { display:flex; gap:.45rem; align-items:center; }
-.dot { width:6px; height:6px; border-radius:50%; background:var(--textd); cursor:pointer; transition:all .3s; }
-.dot.on { background:var(--gold); width:18px; border-radius:3px; }
-#tmr { font-family:'DM Mono',monospace; font-size:.7rem; color:var(--textd); min-width:4ch; text-align:center; }
-#khint { position:fixed; bottom:.5rem; right:.8rem; font-size:.55rem; color:rgba(122,116,112,.4); letter-spacing:.08em; }
+.cb:active { transform:scale(.91); }
+.cb:disabled { opacity:.18; cursor:default; }
+#dots { display:flex; gap:.5rem; align-items:center; }
+.dot { width:7px; height:7px; border-radius:50%; background:var(--textd); cursor:pointer; transition:all .28s; flex-shrink:0; touch-action:manipulation; }
+.dot.on { background:var(--gold); width:20px; border-radius:3px; }
+#khint { position:fixed; bottom:.4rem; right:.8rem; font-size:.5rem; color:rgba(122,116,112,.25); letter-spacing:.08em; pointer-events:none; }
+#swipe-area { position:absolute; inset:0; z-index:98; }
 
 /* ══ SLIDE SHARED ══ */
 .stag { font-size:.56rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); padding:.22rem .7rem; border:1px solid var(--gold-border); background:rgba(200,169,75,.04); }
@@ -568,25 +586,29 @@ html, body { height:100%; background:#030303; font-family:'DM Sans',sans-serif; 
         </div>
       </div>
 
-    </div><!-- /vp -->
-  </div><!-- /wrap -->
+      <!-- swipe: captura toque no slide sem bloquear os controles -->
+      <div id="swipe-area"></div>
 
-  <div id="controls">
-    <button class="cb" id="bprev" onclick="go(cur-1)" title="Anterior ←">‹</button>
-    <div id="dots"></div>
-    <button class="cb" id="bnext" onclick="go(cur+1)" title="Próximo →">›</button>
-    <div id="tmr">00:00</div>
-    <button class="cb" onclick="toggleFS()" title="Tela cheia F">⤢</button>
-  </div>
+    </div><!-- /vp -->
+
+    <!-- barra de navegação: fora do slide, mas dentro do wrap — escala junto -->
+    <div id="controls">
+      <button class="cb" id="bprev" onclick="go(cur-1)" title="Anterior ←">‹</button>
+      <div id="dots"></div>
+      <button class="cb" id="bnext" onclick="go(cur+1)" title="Próximo →">›</button>
+      <button class="cb" onclick="toggleFS()" title="Tela cheia (F)">⤢</button>
+    </div>
+
+  </div><!-- /wrap -->
 </div>
-<div id="khint">← → Navegar &nbsp;·&nbsp; F Tela cheia &nbsp;·&nbsp; T Zerar cronômetro</div>
+<div id="khint">← → Navegar &nbsp;·&nbsp; F Tela cheia</div>
 
 <script>
 const slides = document.querySelectorAll('.sl');
 const N = slides.length;
 let cur = 0;
 
-// build dots
+// dots
 const dotsEl = document.getElementById('dots');
 for(let i=0;i<N;i++){
   const d=document.createElement('div');
@@ -613,32 +635,39 @@ function sync(){
 }
 sync();
 
+// teclado
 document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(cur+1);}
   if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(cur-1);}
   if(e.key.toLowerCase()==='f') toggleFS();
-  if(e.key.toLowerCase()==='t') t0=Date.now();
 });
 
+// swipe
+(function(){
+  const el=document.getElementById('swipe-area');
+  let sx=0,sy=0;
+  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  el.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx;
+    const dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>Math.abs(dy)*1.5&&Math.abs(dx)>40) dx<0?go(cur+1):go(cur-1);
+  },{passive:true});
+})();
+
 function toggleFS(){
-  if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
   else document.exitFullscreen();
 }
 
-// scale
+// scale: wrap = 1280 × 764 (slide 720 + barra 44)
 function scale(){
-  const W=1280,H=720,cH=80;
-  const s=Math.min(window.innerWidth/W,(window.innerHeight-cH)/H);
-  document.getElementById('wrap').style.transform='scale('+s+')';
+  const W=1280, H=764;
+  const s=Math.min(window.innerWidth/W, window.innerHeight/H);
+  const wrap=document.getElementById('wrap');
+  wrap.style.transform='scale('+s+')';
 }
-window.addEventListener('resize',scale); scale();
-
-// timer
-let t0=Date.now();
-setInterval(()=>{
-  const s=Math.floor((Date.now()-t0)/1000);
-  document.getElementById('tmr').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
-},500);
+window.addEventListener('resize',scale);
+scale();
 </script>
 </body>
 </html>
