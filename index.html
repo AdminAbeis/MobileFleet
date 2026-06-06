@@ -628,34 +628,85 @@
   @media(max-width:600px){ .chart-grid{grid-template-columns:1fr;} }
   @media print { .viab-section{display:none!important;} }
 
-  /* ─── BOTÕES FLUTUANTES (PDF + DOCX) ─── */
-  .fab-group {
+
+  /* ─── FAB RADIAL ─── */
+  .fab-root {
     position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
-    display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem;
   }
-  .pdf-btn, .docx-btn, .nav-file-btn {
-    display: flex; align-items: center; gap: 0.6rem;
-    padding: 0.75rem 1.4rem;
-    background: var(--dark-3);
-    border: 1px solid rgba(200,169,75,0.4);
-    border-radius: 4px;
+
+  /* botão principal */
+  .fab-main {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.55), 0 0 0 0 rgba(200,169,75,0.4);
+    transition: transform 0.25s, box-shadow 0.25s;
+    color: #0A0A0A;
+    position: relative; z-index: 2;
+  }
+  .fab-main:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(0,0,0,0.7), 0 0 0 6px rgba(200,169,75,0.15); }
+  .fab-main .fab-icon-plus,
+  .fab-main .fab-icon-x { position: absolute; transition: opacity 0.2s, transform 0.25s; }
+  .fab-main .fab-icon-x  { opacity: 0; transform: rotate(-45deg); }
+
+  /* estado aberto */
+  .fab-root.open .fab-main { transform: scale(1.08); }
+  .fab-root.open .fab-icon-plus { opacity: 0; transform: rotate(45deg); }
+  .fab-root.open .fab-icon-x   { opacity: 1; transform: rotate(0deg); }
+
+  /* itens do menu */
+  .fab-items {
+    position: absolute; bottom: 64px; right: 0;
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 0.65rem; pointer-events: none;
+  }
+  .fab-item {
+    display: flex; align-items: center; gap: 0.55rem;
+    opacity: 0; transform: translateY(12px) scale(0.92);
+    transition: opacity 0.22s, transform 0.22s;
+    pointer-events: none;
+  }
+  .fab-root.open .fab-item { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+  /* escalonamento de entrada */
+  .fab-root.open .fab-item:nth-child(1) { transition-delay: 0.08s; }
+  .fab-root.open .fab-item:nth-child(2) { transition-delay: 0.06s; }
+  .fab-root.open .fab-item:nth-child(3) { transition-delay: 0.04s; }
+  .fab-root.open .fab-item:nth-child(4) { transition-delay: 0.02s; }
+  .fab-root.open .fab-item:nth-child(5) { transition-delay: 0s;    }
+
+  .fab-label {
+    background: rgba(18,16,10,0.92);
+    border: 1px solid rgba(200,169,75,0.25);
     color: var(--gold);
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.78rem; font-weight: 600;
+    font-size: 0.72rem; font-weight: 600;
     letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.3rem 0.75rem; border-radius: 4px;
+    white-space: nowrap;
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+  }
+  .fab-icon-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--dark-3);
+    border: 1px solid rgba(200,169,75,0.35);
+    color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
     cursor: pointer; text-decoration: none;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-    transition: background 0.25s, border-color 0.25s, transform 0.2s;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.5);
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    flex-shrink: 0;
   }
-  .pdf-btn:hover, .docx-btn:hover, .nav-file-btn:hover {
-    background: var(--dark-4);
-    border-color: var(--gold);
-    transform: translateY(-2px);
+  .fab-icon-btn:hover { background: var(--dark-4); border-color: var(--gold); transform: scale(1.12); }
+
+  /* backdrop para fechar ao clicar fora */
+  .fab-backdrop {
+    display: none; position: fixed; inset: 0; z-index: 299;
   }
-  .pdf-btn svg, .docx-btn svg, .nav-file-btn svg { flex-shrink: 0; }
-  @media print {
-    .fab-group { display: none !important; }
-  }
+  .fab-root.open ~ .fab-backdrop { display: block; }
+
+  @media print { .fab-root, .fab-backdrop { display: none !important; } }
 
   /* ─── SCROLL REVEAL ─── */
   /* Visible by default — JS hides then animates in */
@@ -1026,42 +1077,82 @@
 </head>
 <body id="top">
 
-<!-- BOTÕES FLUTUANTES -->
-<div class="fab-group">
-  <a class="nav-file-btn" href="apresentacao.html" title="Ver Apresentação">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/>
+<!-- FAB RADIAL -->
+<div class="fab-root" id="fabRoot">
+  <div class="fab-items">
+
+    <!-- Apresentação -->
+    <div class="fab-item">
+      <span class="fab-label">Apresentação</span>
+      <a class="fab-icon-btn" href="apresentacao.html" title="Ver Apresentação">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Vídeo -->
+    <div class="fab-item">
+      <span class="fab-label">Ver Vídeo</span>
+      <a class="fab-icon-btn" href="#video" title="Ver Vídeo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Download DOCX -->
+    <div class="fab-item">
+      <span class="fab-label">Download DOCX</span>
+      <a class="fab-icon-btn" href="assets/docs/Relatorio_Mobile_Fleet.docx" download="Relatorio_Mobile_Fleet.docx" title="Download DOCX">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="15" x2="12" y2="21"/>
+          <polyline points="9 18 12 21 15 18"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Download Planilha -->
+    <div class="fab-item">
+      <span class="fab-label">Download Planilha</span>
+      <a class="fab-icon-btn" href="assets/docs/PlanilhaViabilidadeFinanceira-MobileFleet.xlsx" download="PlanilhaViabilidadeFinanceira-MobileFleet.xlsx" title="Download Planilha">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <line x1="3" y1="9" x2="21" y2="9"/>
+          <line x1="3" y1="15" x2="21" y2="15"/>
+          <line x1="9" y1="3" x2="9" y2="21"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Gerar PDF -->
+    <div class="fab-item">
+      <span class="fab-label">Gerar PDF</span>
+      <button class="fab-icon-btn" id="pdfBtn" title="Gerar PDF">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Botão principal -->
+  <button class="fab-main" id="fabMain" aria-label="Menu de ações">
+    <svg class="fab-icon-plus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
     </svg>
-    Apresentação
-  </a>
-  <a class="docx-btn" href="assets/docs/Relatorio_Mobile_Fleet.docx" download="Relatorio_Mobile_Fleet.docx" title="Download DOCX">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-      <line x1="12" y1="15" x2="12" y2="21"/>
-      <polyline points="9 18 12 21 15 18"/>
+    <svg class="fab-icon-x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
     </svg>
-    Download DOCX
-  </a>
-  <a class="docx-btn" href="assets/docs/PlanilhaViabilidadeFinanceira-MobileFleet.xlsx" download="PlanilhaViabilidadeFinanceira-MobileFleet.xlsx" title="Download Planilha">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="2"/>
-      <line x1="3" y1="9" x2="21" y2="9"/>
-      <line x1="3" y1="15" x2="21" y2="15"/>
-      <line x1="9" y1="3" x2="9" y2="21"/>
-    </svg>
-    Download Planilha
-  </a>
-  <button class="pdf-btn" id="pdfBtn" title="Gerar PDF">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-      <line x1="12" y1="18" x2="12" y2="12"/>
-      <line x1="9" y1="15" x2="15" y2="15"/>
-    </svg>
-    Gerar PDF
   </button>
 </div>
+<div class="fab-backdrop" id="fabBackdrop"></div>
 
 <!-- NAV -->
 <nav>
@@ -1826,11 +1917,26 @@
     });
   });
 
+  // ── FAB Radial ──
+  const fabRoot = document.getElementById('fabRoot');
+  const fabMain = document.getElementById('fabMain');
+  const fabBackdrop = document.getElementById('fabBackdrop');
+
+  function fabToggle() { fabRoot.classList.toggle('open'); }
+  function fabClose()  { fabRoot.classList.remove('open'); }
+
+  fabMain.addEventListener('click', e => { e.stopPropagation(); fabToggle(); });
+  fabBackdrop.addEventListener('click', fabClose);
+
+  // fechar ao clicar em qualquer item do menu
+  fabRoot.querySelectorAll('.fab-icon-btn').forEach(btn => {
+    btn.addEventListener('click', () => { if(!btn.id) fabClose(); });
+  });
+
   // ── Botão PDF ──
   document.getElementById('pdfBtn').addEventListener('click', () => {
-    // Garante que todos os elementos revelados estão visíveis antes de imprimir
+    fabClose();
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
-    // Pequeno delay para o browser processar antes de abrir o diálogo
     setTimeout(() => window.print(), 120);
   });
 </script>
