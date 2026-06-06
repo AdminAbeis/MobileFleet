@@ -598,7 +598,7 @@
     position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
     display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem;
   }
-  .pdf-btn, .docx-btn {
+  .pdf-btn, .docx-btn, .nav-file-btn {
     display: flex; align-items: center; gap: 0.6rem;
     padding: 0.75rem 1.4rem;
     background: var(--dark-3);
@@ -612,12 +612,12 @@
     box-shadow: 0 4px 24px rgba(0,0,0,0.5);
     transition: background 0.25s, border-color 0.25s, transform 0.2s;
   }
-  .pdf-btn:hover, .docx-btn:hover {
+  .pdf-btn:hover, .docx-btn:hover, .nav-file-btn:hover {
     background: var(--dark-4);
     border-color: var(--gold);
     transform: translateY(-2px);
   }
-  .pdf-btn svg, .docx-btn svg { flex-shrink: 0; }
+  .pdf-btn svg, .docx-btn svg, .nav-file-btn svg { flex-shrink: 0; }
   @media print {
     .fab-group { display: none !important; }
   }
@@ -993,6 +993,12 @@
 
 <!-- BOTÕES FLUTUANTES -->
 <div class="fab-group">
+  <a class="nav-file-btn" href="apresentacao.html" title="Ver Apresentação">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/>
+    </svg>
+    Apresentação
+  </a>
   <a class="docx-btn" href="assets/docs/Relatorio_Mobile_Fleet.docx" download="Relatorio_Mobile_Fleet.docx" title="Download DOCX">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -1068,7 +1074,7 @@
     <div class="hero-meta">
       <div><strong>Marlon Luiz Ganancio</strong>Professor</div>
       <div><strong>Administração</strong>Ciências Contábeis</div>
-      <div><strong>1º Bimestre</strong>2026</div>
+      <div><strong>2º Bimestre</strong>2026</div>
     </div>
   </div>
   <div class="scroll-hint"></div>
@@ -1298,11 +1304,14 @@
       <div class="c-block c-area-activities">
         <div class="c-block-title"><span class="icon">⚙️</span> Atividades-Chave</div>
         <ul class="c-items">
-          <li>Troca de óleo no local do cliente</li>
+          <li>Manutenção preventiva móvel no local do cliente</li>
+          <li>Orientação técnica sobre intervalo real de troca</li>
+          <li>Transporte e entrega do OLUC à rerrefinadora</li>
+          <li>Emissão de comprovante ambiental por atendimento</li>
           <li>Logística de atendimento e roteirização</li>
-          <li>Gestão de estoque diversificado</li>
+          <li>Gestão da plataforma digital (agendamento, histórico, alertas)</li>
           <li>Prospecção e captação de clientes B2B</li>
-          <li>Gestão da plataforma digital de agendamento</li>
+          <li>Gestão de estoque para atender os respectivos clientes</li>
         </ul>
       </div>
 
@@ -1310,8 +1319,11 @@
         <div class="c-block-title"><span class="icon">🎁</span> Proposta de Valor</div>
         <ul class="c-items">
           <li>Troca de óleo delivery: atendimento no local</li>
-          <li>Redução do tempo de inatividade da frota</li>
+          <li>Redução do tempo de inatividade e do prejuízo operacional da frota</li>
           <li>Serviço especializado para veículos leves, utilitários e caminhões</li>
+          <li>Troca de óleo baseada em análise técnica real – sem desperdício</li>
+          <li>2.310 L de OLUC/mês retornam ao ciclo via rerrefino – zero descarte irregular</li>
+          <li>Comprovante legal de destinação OLUC e Relatório ESG de impacto ambiental por frota</li>
           <li>Produtos homologados pelas montadoras</li>
           <li>Histórico digital de manutenção por veículo</li>
           <li>Atendimento programado — Plano mensal ou por quilometragem</li>
@@ -1321,11 +1333,11 @@
       <div class="c-block c-area-relations">
         <div class="c-block-title"><span class="icon">💬</span> Relacionamento</div>
         <ul class="c-items">
-          <li>Contratos de manutenção preventiva B2B</li>
-          <li>Relatórios periódicos de desempenho</li>
+          <li>Contratos de manutenção preventiva B2B — contrato mensal para frotas pesadas e leves</li>
+          <li>Relatórios periódicos de desempenho da frota</li>
           <li>Gerente de conta dedicado</li>
           <li>Agendamento online self-service</li>
-          <li>Notificações automáticas de troca</li>
+          <li>Notificações automáticas de troca por KM (foco B2C)</li>
           <li>Histórico digital do veículo</li>
         </ul>
       </div>
@@ -1336,6 +1348,7 @@
           <li><strong style="color:var(--gold);font-size:0.7rem">B2B</strong></li>
           <li>Transportadoras e empresas de logística</li>
           <li>Construtoras e locadoras</li>
+          <li>Órgãos públicos municipais (frotas de prefeituras)</li>
           <li><strong style="color:#7A6A44;font-size:0.7rem">B2C</strong></li>
           <li>Motoristas de app</li>
           <li>Veículos premium</li>
@@ -1346,22 +1359,23 @@
       <div class="c-block c-area-resources">
         <div class="c-block-title"><span class="icon">🔧</span> Recursos Principais</div>
         <ul class="c-items">
-          <li>Van adaptada (mini oficina móvel)</li>
+          <li>Vans adaptadas (mini oficina móvel) e tanques herméticos para OLUC</li>
           <li>Equipamentos de troca de óleo e bombas de sucção</li>
-          <li>Tanques e equipamento para descarte correto de óleo usado</li>
+          <li>Tanques e equipamentos para descarte correto de óleo usado</li>
           <li>Estoque de lubrificantes, filtros e fluidos</li>
-          <li>Sistema de gestão de manutenção (TI)</li>
-          <li>Técnicos especializados e vendedor B2B</li>
+          <li>Plataforma digital de gestão de frotas</li>
+          <li>Licença ambiental trifásica (LP + LI + LO, CEMA 107/2020)</li>
+          <li>Técnicos especializados e vendedores B2B</li>
         </ul>
       </div>
 
       <div class="c-block c-area-channels">
         <div class="c-block-title"><span class="icon">📡</span> Canais</div>
         <ul class="c-items">
-          <li>Website com agendamento online</li>
-          <li>WhatsApp Business</li>
-          <li>Google Meu Negócio / Instagram</li>
-          <li>Vendedor B2B com visita ativa</li>
+          <li>Plataforma digital — app e site para agendamentos</li>
+          <li>Visitas comerciais B2B a transportadoras e frotas corporativas</li>
+          <li>WhatsApp Business (B2C)</li>
+          <li>Google Meu Negócio e redes sociais</li>
           <li>Indicação (boca a boca)</li>
         </ul>
       </div>
@@ -1371,7 +1385,7 @@
         <ul class="c-items">
           <li><strong style="color:var(--gold);font-size:0.7rem">Fixos</strong></li>
           <li>Financiamento da van</li>
-          <li>Salários da equipe</li>
+          <li>Salários (técnicos, motorista, vendedor, gestor)</li>
           <li>Seguro e sistema de gestão</li>
           <li>Marketing</li>
           <li><strong style="color:var(--gold);font-size:0.7rem">Variáveis</strong></li>
@@ -1388,10 +1402,13 @@
       <div class="c-block c-area-revenues">
         <div class="c-block-title"><span class="icon">💰</span> Fontes de Receita</div>
         <ul class="c-items">
-          <li>Troca de óleo completa (óleo + filtro + mão de obra + deslocamento)</li>
+          <li>Troca de óleo completa — óleo + filtro + mão de obra + deslocamento (avulso e plano)</li>
           <li>Filtros de ar, cabine e combustível</li>
           <li>Fluidos hidráulicos e de freio</li>
-          <li><strong style="color:var(--gold)">Plano Frota</strong> — contrato mensal por veículo com manutenção programada</li>
+          <li><strong style="color:var(--gold)">Plano Frota</strong> — contrato mensal por veículo para frotas pesadas e leves</li>
+          <li>Taxa de destinação ambiental OLUC</li>
+          <li>Venda de OLUC à rerrefinadora</li>
+          <li>Relatórios ESG premium por frota</li>
         </ul>
       </div>
     </div>
